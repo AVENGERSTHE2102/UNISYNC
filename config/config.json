@@ -1,23 +1,29 @@
 {
   "development": {
-    "username": "root",
-    "password": "mrunal@486",
-    "database": "unisync",
-    "host": "127.0.0.1",
+    "use_env_variable": false,
+    "username": { "ENV": "DB_USER" },
+    "password": { "ENV": "DB_PASSWORD" },
+    "database": { "ENV": "DB_NAME" },
+    "host": { "ENV": "DB_HOST" },
+    "port": { "ENV": "DB_PORT" },
     "dialect": "mysql"
   },
   "test": {
-    "username": "root",
-    "password": "mrunal@486",
-    "database": "unisync",
-    "host": "127.0.0.1",
+    "use_env_variable": false,
+    "username": { "ENV": "DB_USER" },
+    "password": { "ENV": "DB_PASSWORD" },
+    "database": { "ENV": "DB_NAME_TEST" },
+    "host": { "ENV": "DB_HOST" },
+    "port": { "ENV": "DB_PORT" },
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": "mrunal@486",
-    "database": "unisync",
-    "host": "127.0.0.1",
+    "use_env_variable": false,
+    "username": { "ENV": "DB_USER" },
+    "password": { "ENV": "DB_PASSWORD" },
+    "database": { "ENV": "DB_NAME_PROD" },
+    "host": { "ENV": "DB_HOST" },
+    "port": { "ENV": "DB_PORT" },
     "dialect": "mysql"
   }
 }
