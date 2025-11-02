@@ -121,5 +121,70 @@
     </footer>
 
     <script src="assets/js/app.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const mentorshipGrid = document.querySelector('.mentorship-grid');
+            const token = localStorage.getItem('unisyncToken');
+
+            if (!token) {
+                alert('Please log in to view mentors.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/api/mentorship', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                       window.location.href = 'login.html';
+                    }
+                    throw new Error('Failed to fetch mentors');
+                }
+
+                const mentors = await response.json();
+
+                // Clear the hard-coded placeholder mentors
+                mentorshipGrid.innerHTML = ''; 
+
+                if (mentors.length === 0) {
+                    mentorshipGrid.innerHTML = '<p style="text-align: center;">No mentors found.</p>';
+                    return;
+                }
+
+                // Loop through mentors and create HTML
+                mentors.forEach(mentor => {
+                    // Create skills tags
+                    let skillsHTML = '';
+                    if (mentor.skills) {
+                        const skillsArray = mentor.skills.split(',');
+                        skillsHTML = skillsArray.map(skill => `<span>${skill.trim()}</span>`).join('');
+                    }
+
+                    const mentorCardHTML = `
+                        <div class="mentor-card" data-expertise="webdev"> <img src="${mentor.profilePicture || 'https://placehold.co/300x300/e0e0e0/333333?text=N/A'}" alt="${mentor.name}">
+                            <h3>${mentor.name}</h3>
+                            <p class="mentor-role">${mentor.role || 'Alumni'} at ${mentor.company || 'N/A'}</p>
+                            <p class="mentor-bio">${mentor.bio || 'This mentor has not added a bio yet.'}</p>
+                            <div class="mentor-skills">
+                                ${skillsHTML}
+                            </div>
+                            <a href="#" class="btn btn-primary">Connect</a>
+                        </div>
+                    `;
+                    mentorshipGrid.innerHTML += mentorCardHTML;
+                });
+
+            } catch (error) {
+                console.error('Error fetching mentors:', error);
+                mentorshipGrid.innerHTML = '<p style="text-align: center; color: red;">Could not load mentors. Please try again later.</p>';
+            }
+        });
+    </script>
     </body>
 </html>

@@ -132,5 +132,91 @@
     </footer>
 
     <script src="assets/js/app.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const jobsList = document.querySelector('.jobs-list');
+            const token = localStorage.getItem('unisyncToken');
+
+            if (!token) {
+                alert('Please log in to view jobs.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/api/jobs', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                       // Invalid token, send back to login
+                       window.location.href = 'login.html';
+                    }
+                    throw new Error('Failed to fetch jobs');
+                }
+
+                const jobs = await response.json();
+
+                // Clear the hard-coded placeholder jobs
+                jobsList.innerHTML = ''; 
+
+                if (jobs.length === 0) {
+                    jobsList.innerHTML = '<p style="text-align: center;">No job opportunities found.</p>';
+                    return;
+                }
+
+                // Loop through jobs and create HTML
+                jobs.forEach(job => {
+                    const jobType = job.type || 'internship'; // Default to internship if no type
+
+                    const jobCardHTML = `
+                        <div class="job-item" data-job-type="${jobType}">
+                            <div class="job-info">
+                                <h3>${job.title}</h3>
+                                <p class="job-company">${job.company}</p>
+                                <p class="job-location">${job.location || 'N/A'}</p>
+                            </div>
+                            <div class="job-details-toggle">
+                                <a href="#" class="btn btn-secondary">View Details</a>
+                            </div>
+                        </div>
+                        <div class="job-description">
+                            <h4>Job Description</h4>
+                            <p>${job.description.replace(/\n/g, '<br>')}</p>
+                            ${job.deadline ? `<p><strong>Deadline:</strong> ${new Date(job.deadline).toLocaleDateString()}</p>` : ''}
+                            <a href="mailto:${job.contactEmail}" class="btn btn-primary apply-btn">Apply Now</a>
+                        </div>
+                    `;
+                    jobsList.innerHTML += jobCardHTML;
+                });
+
+                // Re-initialize the "View Details" toggle logic from app.js
+                //
+                const jobDetailsToggle = document.querySelectorAll('.job-details-toggle a');
+                jobDetailsToggle.forEach(toggle => {
+                    toggle.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const jobItem = toggle.closest('.job-item');
+                        const jobDescription = jobItem.nextElementSibling;
+                        if (jobDescription.style.display === 'block') {
+                            jobDescription.style.display = 'none';
+                            toggle.textContent = 'View Details';
+                        } else {
+                            jobDescription.style.display = 'block';
+                            toggle.textContent = 'Hide Details';
+                        }
+                    });
+                });
+
+            } catch (error) {
+                console.error('Error fetching jobs:', error);
+                jobsList.innerHTML = '<p style="text-align: center; color: red;">Could not load jobs. Please try again later.</p>';
+            }
+        });
+    </script>
     </body>
 </html>
