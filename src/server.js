@@ -1,38 +1,35 @@
-
 const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-require('dotenv').config();
+const bodyParser = require('body-parser');
+const db = require('./models');
+const authRoutes = require('./routes/authRoutes');
+const eventRoutes = require('./routes/eventRoutes');
+const mentorshipRoutes = require('./routes/mentorshipRoutes');
+const jobRoutes = require('./routes/jobRoutes');
+const communityRoutes = require('./routes/communityRoutes');
+const threadRoutes = require('./routes/threadRoutes');
+const replyRoutes = require('./routes/replyRoutes');
 
 const app = express();
 
-// Middleware
-app.use(cors());
-app.use(helmet());
-app.use(morgan('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// Routes
-app.get('/', (req, res) => {
-  res.send('UniSync Backend is running!');
+// Serve static files from the 'public' directory
+app.use(express.static('public'));
+
+// API routes
+app.use('/api/auth', authRoutes);
+app.use('/api/events', eventRoutes);
+app.use('/api/mentorships', mentorshipRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/communities', communityRoutes);
+app.use('/api/communities/:communityId/threads', threadRoutes);
+app.use('/api/threads/:threadId/replies', replyRoutes);
+
+const PORT = process.env.PORT || 3000;
+
+db.sequelize.sync().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}.`);
+  });
 });
-
-// API Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-// app.use('/api/users', require('./routes/userRoutes'));
-// app.use('/api/mentorship', require('./routes/mentorshipRoutes'));
-// app.use('/api/communities', require('./routes/communityRoutes'));
-// app.use('/api/threads', require('./routes/threadRoutes'));
-// app.use('/api/replies', require('./routes/replyRoutes'));
-// app.use('/api/events', require('./routes/eventRoutes'));
-// app.use('/api/jobs', require('./routes/jobRoutes'));
-// app.use('/api/resources', require('./routes/resourceRoutes'));
-// app.use('/api/chat', require('./routes/chatRoutes'));
-// app.use('/api/leaderboard', require('./routes/leaderboardRoutes'));
-
-// Error Handling Middleware
-app.use(require('./middleware/errorHandler'));
-
-module.exports = app;

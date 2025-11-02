@@ -51,8 +51,58 @@ document.addEventListener('DOMContentLoaded', function () {
     // Events Page Filter
     applyFilter(document.getElementById('event-type'), '.event-card', 'data-event-type');
 
+    const eventsGrid = document.querySelector('.events-grid');
+    if (eventsGrid) {
+        fetch('/api/events')
+            .then(response => response.json())
+            .then(events => {
+                eventsGrid.innerHTML = '';
+                events.forEach(event => {
+                    const eventCard = `
+                        <div class="event-card" data-event-type="${event.eventType}">
+                            <div class="event-date">
+                                <div class="month">${new Date(event.date).toLocaleString('default', { month: 'short' })}</div>
+                                <div class="day">${new Date(event.date).getDate()}</div>
+                            </div>
+                            <div class="event-details">
+                                <h3>${event.title}</h3>
+                                <div class="event-meta">${event.eventType}</div>
+                                <p>${event.description}</p>
+                            </div>
+                        </div>
+                    `;
+                    eventsGrid.innerHTML += eventCard;
+                });
+            });
+    }
+
     // Mentorship Page Filter
     applyFilter(document.getElementById('mentor-expertise'), '.mentor-card', 'data-expertise');
+
+    const mentorshipGrid = document.querySelector('.mentorship-grid');
+    if (mentorshipGrid) {
+        fetch('/api/mentorships')
+            .then(response => response.json())
+            .then(mentorships => {
+                mentorshipGrid.innerHTML = '';
+                mentorships.forEach(mentor => {
+                    const mentorCard = `
+                        <div class="mentor-card" data-expertise="${mentor.expertise}">
+                            <img src="assets/img/Aditya_photo.jpg" alt="${mentor.mentorName}">
+                            <h3>${mentor.mentorName}</h3>
+                            <div class="mentor-role">${mentor.expertise}</div>
+                            <p class="mentor-bio">${mentor.bio}</p>
+                            <div class="mentor-skills">
+                                <span>Web Development</span>
+                                <span>UI/UX Design</span>
+                            </div>
+                            <a href="#" class="btn btn-primary">Connect</a>
+                        </div>
+                    `;
+                    mentorshipGrid.innerHTML += mentorCard;
+                });
+            });
+    }
 
     // Jobs Page Filter and Details Toggle
     const jobTypeFilter = document.getElementById('job-type');
@@ -77,9 +127,63 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    const jobsList = document.querySelector('.jobs-list');
+    if (jobsList) {
+        fetch('/api/jobs')
+            .then(response => response.json())
+            .then(jobs => {
+                jobsList.innerHTML = '';
+                jobs.forEach(job => {
+                    const jobItem = `
+                        <div class="job-item" data-job-type="${job.jobType}">
+                            <div class="job-info">
+                                <h3>${job.title}</h3>
+                                <div class="job-company">${job.company}</div>
+                                <div class="job-location">${job.location}</div>
+                            </div>
+                            <div class="job-details-toggle">
+                                <a href="#">View Details</a>
+                            </div>
+                        </div>
+                        <div class="job-description">
+                            <h4>Job Description</h4>
+                            <p>${job.description}</p>
+                            <a href="#" class="btn btn-primary apply-btn">Apply Now</a>
+                        </div>
+                    `;
+                    jobsList.innerHTML += jobItem;
+                });
+            });
+    }
+
     // Community Page Filters
     applyFilter(document.getElementById('community-category'), '.community-card', 'data-category');
     applyFilter(document.getElementById('thread-category'), '.thread-item', 'data-thread-category');
+
+    const communityGrid = document.querySelector('.community-grid');
+    if (communityGrid) {
+        fetch('/api/communities')
+            .then(response => response.json())
+            .then(communities => {
+                communityGrid.innerHTML = '';
+                communities.forEach(community => {
+                    const communityCard = `
+                        <div class="community-card" data-category="${community.category}">
+                            <div class="community-icon"><span class="material-icons">groups</span></div>
+                            <div class="community-details">
+                                <h3>${community.name}</h3>
+                                <p>${community.description}</p>
+                                <div class="community-tags">
+                                    <span>${community.category}</span>
+                                </div>
+                                <a href="#" class="btn btn-primary">Join Community</a>
+                            </div>
+                        </div>
+                    `;
+                    communityGrid.innerHTML += communityCard;
+                });
+            });
+    }
 
     // Signup Page User Type Toggle
     const userTypeSelect = document.getElementById('user-type');
@@ -179,18 +283,35 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        loginForm.addEventListener('submit', function (e) {
+        loginForm.addEventListener('submit', async function (e) {
             e.preventDefault();
             const email = emailInput.value;
             const password = passwordInput.value;
 
             if (validateEmail(email) && validatePassword(password)) {
-                // Simulate a successful login
-                showPopup('User logged in successfully!');
-                // Redirect to the dashboard or another page
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 2000);
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        localStorage.setItem('token', data.token);
+                        showPopup('User logged in successfully!');
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 2000);
+                    } else {
+                        showPopup(data.message);
+                    }
+                } catch (error) {
+                    showPopup('Error logging in');
+                }
             } else {
                 showPopup('Please correct the errors in the form.');
             }
@@ -223,19 +344,41 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        signupForm.addEventListener('submit', function (e) {
+        signupForm.addEventListener('submit', async function (e) {
             e.preventDefault();
             const name = nameInput.value;
             const email = emailInput.value;
             const password = passwordInput.value;
+            const userType = document.getElementById('user-type').value;
+            const year = document.getElementById('year').value;
+            const branch = document.getElementById('branch').value;
+            const company = document.getElementById('company').value;
+            const role = document.getElementById('role').value;
+            const interests = Array.from(document.getElementById('interests').selectedOptions).map(option => option.value);
 
             if (name && validateEmail(email) && validatePassword(password)) {
-                // Simulate a successful signup
-                showPopup('User created successfully!');
-                // Redirect to the login page
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 2000);
+                try {
+                    const response = await fetch('/api/auth/signup', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ name, email, password, userType, year, branch, company, role, interests })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        showPopup('User created successfully!');
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 2000);
+                    } else {
+                        showPopup(data.message);
+                    }
+                } catch (error) {
+                    showPopup('Error creating user');
+                }
             } else {
                 showPopup('Please correct the errors in the form.');
             }

@@ -1,32 +1,17 @@
-'use strict';
-const { Model } = require('sequelize');
-
 module.exports = (sequelize, DataTypes) => {
-  class Mentorship extends Model {
-    static associate(models) {
-      Mentorship.belongsTo(models.User, { foreignKey: 'studentId', as: 'student' });
-      Mentorship.belongsTo(models.User, { foreignKey: 'mentorId', as: 'mentor' });
+  const Mentorship = sequelize.define('Mentorship', {
+    mentorName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    expertise: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    bio: {
+      type: DataTypes.TEXT,
+      allowNull: false
     }
-  }
-
-  Mentorship.init({
-    studentId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    mentorId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    compatibilityScore: DataTypes.FLOAT,
-    status: {
-      type: DataTypes.ENUM('pending', 'active', 'completed'),
-      allowNull: false,
-      defaultValue: 'pending',
-    },
-  }, {
-    sequelize,
-    modelName: 'Mentorship',
   });
 
   return Mentorship;

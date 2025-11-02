@@ -1,37 +1,25 @@
-'use strict';
-const { Model } = require('sequelize');
-
 module.exports = (sequelize, DataTypes) => {
-  class Job extends Model {
-    static associate(models) {
-      // No associations needed for now
-    }
-  }
-
-  Job.init({
+  const Job = sequelize.define('Job', {
     title: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     company: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
+    },
+    location: {
+      type: DataTypes.STRING,
+      allowNull: false
     },
     description: {
       type: DataTypes.TEXT,
-      allowNull: false,
+      allowNull: false
     },
-    deadline: DataTypes.DATE,
-    contactEmail: {
+    jobType: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        isEmail: true,
-      },
-    },
-  }, {
-    sequelize,
-    modelName: 'Job',
+      allowNull: false
+    }
   });
 
   return Job;
