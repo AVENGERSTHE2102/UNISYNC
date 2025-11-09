@@ -1,42 +1,31 @@
-'use strict';
+const { Sequelize } = require('sequelize');
+const sequelize = require('../config/database');
 
-const fs = require('fs');
-const path = require('path');
-const Sequelize = require('sequelize');
-const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/database.js')[env];
 const db = {};
 
-let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
-} else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
-}
-
-fs
-  .readdirSync(__dirname)
-  .filter(file => {
-    return (
-      file.indexOf('.') !== 0 &&
-      file !== basename &&
-      file.slice(-3) === '.js' &&
-      file.indexOf('.test.js') === -1
-    );
-  })
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
-  });
-
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
-
-db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+db.sequelize = sequelize;
+
+db.User = require('./user.js')(sequelize, Sequelize);
+db.Event = require('./event.js')(sequelize, Sequelize);
+db.Mentorship = require('./mentorship.js')(sequelize, Sequelize);
+db.Job = require('./job.js')(sequelize, Sequelize);
+db.Community = require('./community.js')(sequelize, Sequelize);
+db.Thread = require('./thread.js')(sequelize, Sequelize);
+db.Reply = require('./reply.js')(sequelize, Sequelize);
+
+// Define associations here
+
+db.Thread.belongsTo(db.User, { foreignKey: 'userId' });
+db.User.hasMany(db.Thread, { foreignKey: 'userId' });
+
+db.Reply.belongsTo(db.User, { foreignKey: 'userId' });
+db.User.hasMany(db.Reply, { foreignKey: 'userId' });
+
+db.Reply.belongsTo(db.Thread, { foreignKey: 'threadId' });
+db.Thread.hasMany(db.Reply, { foreignKey: 'threadId' });
+
+db.Thread.belongsTo(db.Community, { foreignKey: 'communityId' });
+db.Community.hasMany(db.Thread, { foreignKey: 'communityId' });
 
 module.exports = db;
