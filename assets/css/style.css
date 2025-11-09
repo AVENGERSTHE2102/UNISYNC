@@ -1721,4 +1721,14 @@ footer {
     color: #e74c3c; /* A softer red */
 }
 
+.password-suggestion {
+    font-size: 0.75rem;
+    color: #bdc3c7; /* Light grey for suggestion */
+    margin-top: 0.25rem;
+    text-align: left;
+    padding-left: 1.25rem;
+    display: block;
+    width: 100%;
+}
+
 

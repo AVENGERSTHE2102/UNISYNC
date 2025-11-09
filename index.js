@@ -8,7 +8,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 // Socket.IO connection
-//require('./src/realtime/chatHandler')(io);
+require('./src/realtime/chatHandler')(io);
 
 const PORT = process.env.PORT || 3000;
 

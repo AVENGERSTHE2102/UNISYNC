@@ -162,45 +162,40 @@ document.addEventListener('DOMContentLoaded', function () {
         const emailFeedback = document.getElementById('email-feedback');
         const passwordFeedback = document.getElementById('password-feedback');
 
-        // (Your validation functions can stay here if you want)
+        emailInput.addEventListener('input', () => {
+            if (validateEmail(emailInput.value)) {
+                setFeedback(emailFeedback, true, 'Valid email');
+            } else {
+                setFeedback(emailFeedback, false, 'Please enter a valid email');
+            }
+        });
 
-        loginForm.addEventListener('submit', async function (e) {
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
+            if (password.length === 0) {
+                passwordFeedback.className = 'feedback password-suggestion';
+                passwordFeedback.textContent = 'Password must be at least 8 characters, with uppercase, lowercase, number, and special character';
+            } else if (validatePassword(password)) {
+                setFeedback(passwordFeedback, true, 'Strong password');
+            } else {
+                setFeedback(passwordFeedback, false, 'Password must be at least 8 characters, with uppercase, lowercase, number, and special character');
+            }
+        });
+
+        loginForm.addEventListener('submit', function (e) {
             e.preventDefault();
             const email = emailInput.value;
             const password = passwordInput.value;
 
-            if (!email || !password) {
-                showPopup('Please enter both email and password.');
-                return;
-            }
-
-            try {
-                const response = await fetch('http://localhost:3000/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || 'Login failed');
-                }
-
-                // --- THIS IS THE CRITICAL STEP ---
-                // Save the token to localStorage
-                localStorage.setItem('unisyncToken', data.token);
-
-                showPopup('Login successful! Redirecting...');
-                
-                // Redirect to the dashboard
+            if (validateEmail(email) && validatePassword(password)) {
+                // Simulate a successful login
+                showPopup('User logged in successfully!');
+                // Redirect to the dashboard or another page
                 setTimeout(() => {
                     window.location.href = 'dashboard.html';
-                }, 1500);
-
-            } catch (error) {
-                console.error('Login error:', error);
-                showPopup(error.message);
+                }, 2000);
+            } else {
+                showPopup('Please correct the errors in the form.');
             }
         });
     }
@@ -211,59 +206,45 @@ document.addEventListener('DOMContentLoaded', function () {
         const nameInput = document.getElementById('name');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
-        const userTypeSelect = document.getElementById('user-type');
-        
-        // (Your validation listeners can stay here)
+        const emailFeedback = document.getElementById('email-feedback');
+        const passwordFeedback = document.getElementById('password-feedback');
 
-        signupForm.addEventListener('submit', async function (e) {
-            e.preventDefault();
-            
-            // Collect all form data
-            const formData = {
-                name: nameInput.value,
-                email: emailInput.value,
-                password: passwordInput.value,
-                userType: userTypeSelect.value
-            };
-
-            // You can add the student/alumni fields here too
-            if (formData.userType === 'student') {
-                formData.yearOfStudy = document.getElementById('year').value;
-                formData.branch = document.getElementById('branch').value;
+        emailInput.addEventListener('input', () => {
+            if (validateEmail(emailInput.value)) {
+                setFeedback(emailFeedback, true, 'Valid email');
             } else {
-                formData.company = document.getElementById('company').value;
-                formData.role = document.getElementById('role').value;
+                setFeedback(emailFeedback, false, 'Please enter a valid email');
             }
+        });
 
-            try {
-                const response = await fetch('http://localhost:3000/api/auth/signup', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                });
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
+            if (password.length === 0) {
+                passwordFeedback.className = 'feedback password-suggestion';
+                passwordFeedback.textContent = 'Password must be at least 8 characters, with uppercase, lowercase, number, and special character';
+            } else if (validatePassword(password)) {
+                setFeedback(passwordFeedback, true, 'Strong password');
+            } else {
+                setFeedback(passwordFeedback, false, 'Password must be at least 8 characters, with uppercase, lowercase, number, and special character');
+            }
+        });
 
-                const data = await response.json();
+        signupForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = nameInput.value;
+            const email = emailInput.value;
+            const password = passwordInput.value;
 
-                if (!response.ok) {
-                    // Handle validation errors from the backend
-                    if (data.errors) {
-                        const errorMsg = data.errors.map(err => Object.values(err)[0]).join('\n');
-                        throw new Error(errorMsg);
-                    }
-                    throw new Error(data.message || 'Signup failed');
-                }
-
-                showPopup('Signup successful! Please log in.');
-                
+            if (name && validateEmail(email) && validatePassword(password)) {
+                // Simulate a successful signup
+                showPopup('User created successfully!');
                 // Redirect to the login page
                 setTimeout(() => {
                     window.location.href = 'login.html';
                 }, 2000);
-
-            } catch (error) {
-                console.error('Signup error:', error);
-                showPopup(error.message);
+            } else {
+                showPopup('Please correct the errors in the form.');
             }
         });
     }
-})
+});
