@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>Unisync Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -975,7 +976,7 @@
                     <div class="reminder-item">
                         <div class="reminder-icon-box"><i class="fa-solid fa-basketball"></i></div>
                         <div class="reminder-details">
-                            <h5>Basketball Practice</h5>
+                            <h5>Basketball Match</h5>
                             <p>Tomorrow, 07:00 AM</p>
                         </div>
                     </div>
@@ -992,5 +993,218 @@
 
     </div>
 
+=======
+    <meta name="description" content="UniSync Dashboard: Your personalized hub for recent activity, mentors, events, and leaderboard.">
+    <meta name="keywords" content="UniSync, dashboard, feed, mentors, events, leaderboard, student, alumni">
+    <title>Dashboard - UniSync</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <a href="index.html" class="logo">UniSync</a>
+                <div class="nav-right">
+                    <div class="hamburger-menu">
+                        <div class="line"></div>
+                        <div class="line"></div>
+                        <div class="line"></div>
+                    </div>
+                    <ul class="nav-links">
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="mentorship.html">Mentorship</a></li>
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="community.html">Community</a></li>
+                        <li><a href="profile.html">Profile</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="chat.html">Chat</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                    <div class="auth-buttons">
+                        <a href="login.html" class="btn btn-secondary">Login</a>
+                        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="dashboard">
+            <div class="container">
+                <h2 class="section-title">Welcome back, Emma!</h2>
+                <div class="dashboard-grid">
+                    <!-- Widget 1: Welcome -->
+                    <div class="dashboard-section welcome-widget">
+                        <h3>Quick Actions</h3>
+                        <p class="subtitle">What do you want to do? </p>
+                        <div class="quick-actions">
+                            <a href="community.html" class="btn btn-primary">
+                                <i class="material-icons">add_comment</i>
+                                <span>Ask a Question</span>
+                            </a>
+                            <a href="mentorship.html" class="btn btn-secondary">
+                                <i class="material-icons">person_search</i>
+                                <span>Find a Mentor</span>
+                            </a>
+                            <a href="chat.html" class="btn btn-secondary">
+                                <i class="material-icons">chat</i>
+                                <span>Check Messages</span>
+                                <span class="badge">3</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Widget 2: My Schedule (Smart Reminders) -->
+                    <div class="dashboard-section">
+                        <h3>My Schedule</h3>
+                        <div class="schedule-list">
+                            <div class="schedule-item">
+                                <div class="schedule-info">
+                                    <h4>AI & ML Workshop</h4>
+                                    <p>Oct 02, 2025 | 10:00 AM</p>
+                                </div>
+                                <span class="schedule-tag registered">Registered</span>
+                            </div>
+                            <div class="schedule-item">
+                                <div class="schedule-info">
+                                    <h4>Apply for Software Engineer Intern</h4>
+                                    <p>Google | Deadline: Oct 10, 2025</p>
+                                </div>
+                                <span class="schedule-tag deadline">Deadline</span>
+                            </div>
+                            <div class="schedule-item suggested">
+                                <div class="schedule-info">
+                                    <h4>Innovate & Create: Hackathon</h4>
+                                    <p>Sep 15-16, 2025</p>
+                                </div>
+                                <span class="schedule-tag suggested">Suggested</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Widget 3: Suggested -->
+                    <div class="dashboard-section suggested-widget">
+                        <h3>Suggested for You</h3>
+                        <div class="community-suggestion-item">
+                        <div class="community-card-small">
+                            <div class="community-icon">
+                            </div>
+                            <div class="community-details">
+                                <i class="material-icons">code</i>
+                                <h4>Web Developers Club</h4>
+                                <p>A community for all things web development.</p>
+                                <a href="#" class="btn btn-primary btn-small">Join</a>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="community-suggestion-item">
+                        <div class="community-card-small">
+                            <div class="community-icon">
+                            </div>
+                            <div class="community-details">
+                                 <i class="material-icons">sports_basketball</i>
+                                <h4>Basketball Club</h4>
+                                <p>Love playing basketball? Join our club for regular practice sessions and friendly matches. </p>
+                                <a href="#" class="btn btn-primary btn-small">Join</a>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <!-- Widget 4: My Connections -->
+                    <div class="dashboard-section">
+                        <h3>My Connections</h3>
+                        
+                        <h4>Mentor Suggestions</h4>
+                        <div class="mentor-scroll">
+                            <div class="mentor-card-small">
+                                <img src="https://placehold.co/300x300/e0e0e0/333333?text=EB" alt="Mentor Emily Brown">
+                                <h5>Emily Brown</h5>
+                                <a href="chat.html" class="btn btn-primary btn-small">Chat</a>
+                            </div>
+                            <div class="mentor-card-small">
+                                <img src="https://placehold.co/300x300/e0e0e0/333333?text=JS" alt="Mentor Jane Smith">
+                                <h5>Jane Smith</h5>
+                                <a href="chat.html" class="btn btn-primary btn-small">Chat</a>
+                            </div>
+                            <div class="mentor-card-small">
+                                <img src="https://placehold.co/300x300/e0e0e0/333333?text=SW" alt="Mentor Sam Wilson">
+                                <h5>Sam Wilson</h5>
+                                <a href="chat.html" class="btn btn-primary btn-small">Chat</a>
+                            </div>
+                            
+                        </div>
+                        <h4 class="h4-margin-top">Recent Messages</h4>
+                        <div class="recent-messages">
+                            <a href="chat.html" class="message-preview">
+                                <img src="https://placehold.co/300x300/e0e0e0/333333?text=JD" alt="Profile picture">
+                                <div class="message-info">
+                                    <h5>Mentor John Doe</h5>
+                                    <p>Hi, how's your project going?</p>
+                                </div>
+                            </a>
+                            <a href="chat.html" class="message-preview">
+                                <img src="https://placehold.co/300x300/e0e0e0/333333?text=DSA" alt="Profile picture">
+                                <div class="message-info">
+                                    <h5>Study Group - DSA</h5>
+                                    <p>Anyone free for a study session?</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Widget 5: Career Hub -->
+                    <div class="dashboard-section">
+                         <div class="widget-header career-widget-header">
+                            <h3>Career Hub</h3>
+                        </div>
+                        <h4>Recommended For You</h4>
+                         <div class="job-recommendation">
+                            <div class="job-info">
+                                <h4>Software Engineer Intern</h4>
+                                <p>Google | Mountain View, CA</p>
+                            </div>
+                            <a href="jobs.html" class="btn btn-secondary btn-small">Details</a>
+                         </div>
+                         <div class="job-recommendation">
+                            <div class="job-info">
+                                <h4>Product Manager</h4>
+                                <p>Microsoft | Redmond, WA</p>
+                            </div>
+                            <a href="jobs.html" class="btn btn-secondary btn-small">Details</a>
+                         </div>
+                    </div>
+
+                    <!-- Widget 6: My Progress -->
+                    <div class="dashboard-section progress-widget">
+                        <h3>My Progress</h3>
+                        <p class="rank">You are <strong>Rank 7</strong> of 10 in DSA Group</p>
+                        <p>1500 pts</p>
+                        <div class="progress-bar">
+                            <div class="progress-bar-inner" style="width: 75%;"></div>
+                        </div>
+                        <p class="progress-text">50 pts until Rank 8!</p>
+                        <div class="recent-badges">
+                            <i class="material-icons badge-icon" title="Top Contributor">military_tech</i>
+                            <i class="material-icons badge-icon" title="Community Helper">verified</i>
+                            <i class="material-icons badge-icon" title="Welcome">handshake</i>
+                        </div>
+                    </div>
+
+                </div> <!-- .dashboard-grid -->
+            </div> <!-- .container -->
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 UniSync. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/app.js"></script>
+>>>>>>> a77e9a61f0ca1721431064c5567619ebbdec4ce5
 </body>
 </html>
