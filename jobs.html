@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="UniSync Jobs: Discover exclusive internship and job opportunities from our network of alumni and partners.">
+    <meta name="keywords" content="UniSync, jobs, internships, career, opportunities, students, alumni, industry">
+    <title>Jobs - UniSync</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <a href="index.html" class="logo">UniSync</a>
+                <div class="nav-right">
+                    <div class="hamburger-menu">
+                        <div class="line"></div>
+                        <div class="line"></div>
+                        <div class="line"></div>
+                    </div>
+                    <ul class="nav-links">
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="mentorship.html">Mentorship</a></li>
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="community.html">Community</a></li>
+                        <li><a href="profile.html">Profile</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="chat.html">Chat</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                    <div class="auth-buttons">
+                        <a href="login.html" class="btn btn-secondary">Login</a>
+                        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="jobs">
+            <div class="container">
+                <h2 class="section-title">Internship & Job Opportunities</h2>
+
+                <div class="filter-bar">
+                    <label for="job-type">Filter by type:</label>
+                    <select id="job-type" name="job-type">
+                        <option value="all">All</option>
+                        <option value="internship">Internship</option>
+                        <option value="full-time">Full-time</option>
+                        <option value="part-time">Part-time</option>
+                    </select>
+                </div>
+
+                <div class="jobs-list">
+                    <div class="job-item" data-job-type="internship">
+                        <div class="job-info">
+                            <h3>Software Engineer Intern</h3>
+                            <p class="job-company">Google</p>
+                            <p class="job-location">Mountain View, CA</p>
+                        </div>
+                        <div class="job-details-toggle">
+                            <a href="#" class="btn btn-secondary">View Details</a>
+                        </div>
+                    </div>
+                    <div class="job-description">
+                        <h4>Job Description</h4>
+                        <p>This is an internship position for a software engineer. You will be working on exciting projects and contributing to Google's products.</p>
+                        <h4>Required Skills</h4>
+                        <ul>
+                            <li>Proficiency in Java, C++, or Python</li>
+                            <li>Strong understanding of data structures and algorithms</li>
+                            <li>Excellent problem-solving skills</li>
+                        </ul>
+                        <a href="#" class="btn btn-primary apply-btn">Apply Now</a>
+                    </div>
+
+                    <div class="job-item" data-job-type="full-time">
+                        <div class="job-info">
+                            <h3>Product Manager</h3>
+                            <p class="job-company">Microsoft</p>
+                            <p class="job-location">Redmond, WA</p>
+                        </div>
+                        <div class="job-details-toggle">
+                            <a href="#" class="btn btn-secondary">View Details</a>
+                        </div>
+                    </div>
+                    <div class="job-description">
+                        <h4>Job Description</h4>
+                        <p>As a Product Manager, you will be responsible for the product planning and execution throughout the Product Lifecycle.</p>
+                        <h4>Required Skills</h4>
+                        <ul>
+                            <li>5+ years of experience in product management</li>
+                            <li>Excellent communication and leadership skills</li>
+                            <li>Strong technical background</li>
+                        </ul>
+                        <a href="#" class="btn btn-primary apply-btn">Apply Now</a>
+                    </div>
+
+                    <div class="job-item" data-job-type="part-time">
+                        <div class="job-info">
+                            <h3>Data Analyst</h3>
+                            <p class="job-company">Facebook</p>
+                            <p class="job-location">Menlo Park, CA</p>
+                        </div>
+                        <div class="job-details-toggle">
+                            <a href="#" class="btn btn-secondary">View Details</a>
+                        </div>
+                    </div>
+                    <div class="job-description">
+                        <h4>Job Description</h4>
+                        <p>We are looking for a Data Analyst to join our team. You will be responsible for analyzing large datasets and providing valuable insights.</p>
+                        <h4>Required Skills</h4>
+                        <ul>
+                            <li>Proficiency in SQL and Python</li>
+                            <li>Experience with data visualization tools like Tableau</li>
+                            <li>Strong analytical and problem-solving skills</li>
+                        </ul>
+                        <a href="#" class="btn btn-primary apply-btn">Apply Now</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 UniSync. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/app.js"></script>
+    </body>
+</html>

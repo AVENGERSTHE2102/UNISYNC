@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="UniSync Community: Find and join communities and study groups based on your interests.">
+    <meta name="keywords" content="UniSync, community, study groups, tech, hobbies, sports, academics, threads, forum">
+    <title>Community - UniSync</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <a href="index.html" class="logo">UniSync</a>
+                <div class="nav-right">
+                    <div class="hamburger-menu">
+                        <div class="line"></div>
+                        <div class="line"></div>
+                        <div class="line"></div>
+                    </div>
+                    <ul class="nav-links">
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="mentorship.html">Mentorship</a></li>
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="community.html">Community</a></li>
+                        <li><a href="profile.html">Profile</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="chat.html">Chat</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                    <div class="auth-buttons">
+                        <a href="login.html" class="btn btn-secondary">Login</a>
+                        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="community">
+            <div class="container">
+                <h2 class="section-title">Find Your Community</h2>
+
+                <div class="filter-bar">
+                    <label for="community-category">Filter by category:</label>
+                    <select id="community-category" name="community-category">
+                        <option value="all">All</option>
+                        <option value="tech">Tech</option>
+                        <option value="study">Study Groups</option>
+                        <option value="hobbies">Hobbies</option>
+                        <option value="sports">Sports</option>
+                    </select>
+                </div>
+
+                <div class="community-grid">
+                    <div class="community-card" data-category="tech">
+                        <div class="community-icon">
+                            <i class="material-icons">code</i>
+                        </div>
+                        <div class="community-details">
+                            <h3>Web Developers Club</h3>
+                            <p>A community for all things web development. Share your projects, ask questions, and collaborate with fellow developers.</p>
+                            <div class="community-tags">
+                                <span>#webdev</span>
+                                <span>#frontend</span>
+                                <span>#backend</span>
+                            </div>
+                            <a href="#" class="btn btn-primary">Join Community</a>
+                        </div>
+                    </div>
+
+                    <div class="community-card" data-category="study">
+                        <div class="community-icon">
+                            <i class="material-icons">book</i>
+                        </div>
+                        <div class="community-details">
+                            <h3>DSA Study Group</h3>
+                            <p>Preparing for technical interviews? Join our study group to practice data structures and algorithms problems together.</p>
+                            <div class="community-tags">
+                                <span>#dsa</span>
+                                <span>#algorithms</span>
+                                <span>#interviewprep</span>
+                            </div>
+                            <a href="#" class="btn btn-primary">Join Community</a>
+                        </div>
+                    </div>
+
+                    <div class="community-card" data-category="hobbies">
+                        <div class="community-icon">
+                            <i class="material-icons">camera_alt</i>
+                        </div>
+                        <div class="community-details">
+                            <h3>Photography Club</h3>
+                            <p>A community for photography enthusiasts. Share your photos, learn new techniques, and go on photo walks together.</p>
+                            <div class="community-tags">
+                                <span>#photography</span>
+                                <span>#art</span>
+                                <span>#creative</span>
+                            </div>
+                            <a href="#" class="btn btn-primary">Join Community</a>
+                        </div>
+                    </div>
+
+                    <div class="community-card" data-category="sports">
+                        <div class="community-icon">
+                            <i class="material-icons">sports_basketball</i>
+                        </div>
+                        <div class="community-details">
+                            <h3>Basketball Club</h3>
+                            <p>Love playing basketball? Join our club for regular practice sessions and friendly matches.</p>
+                            <div class="community-tags">
+                                <span>#basketball</span>
+                                <span>#sports</span>
+                                <span>#fitness</span>
+                            </div>
+                            <a href="#" class="btn btn-primary">Join Community</a>
+                        </div>
+                    </div>
+
+                    <div class="community-card" data-category="tech">
+                        <div class="community-icon">
+                            <i class="material-icons">memory</i>
+                        </div>
+                        <div class="community-details">
+                            <h3>AI/ML Research Group</h3>
+                            <p>Dive deep into the world of Artificial Intelligence and Machine Learning. Discuss and collaborate on projects.</p>
+                            <div class="community-tags">
+                                <span>#ai</span>
+                                <span>#ml</span>
+                                <span>#research</span>
+                            </div>
+                            <a href="#" class="btn btn-primary">Join Community</a>
+                        </div>
+                    </div>
+
+                    <div class="community-card" data-category="study">
+                        <div class="community-icon">
+                            <i class="material-icons">science</i>
+                        </div>
+                        <div class="community-details">
+                            <h3>Physics Study Circle</h3>
+                            <p>Struggling with complex physics concepts? Join our study circle for peer-to-peer learning and problem-solving sessions.</p>
+                            <div class="community-tags">
+                                <span>#physics</span>
+                                <span>#science</span>
+                                <span>#academics</span>
+                            </div>
+                            <a href="#" class="btn btn-primary">Join Community</a>
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="community-threads">
+                    <h3 class="section-title">Community Threads</h3>
+                    <div class="filter-bar">
+                        <label for="thread-category">Filter by category:</label>
+                        <select id="thread-category" name="thread-category">
+                        <option value="all">All</option>
+                        <option value="general">General</option>
+                        <option value="academics">Academics</option>
+                        <option value="career">Career</option>
+                        <option value="social">Social</option>
+                        </select>
+                    </div>
+
+                    <div class="thread-list">
+                        <div class="thread-item" data-thread-category="academics">
+                            <h4>Best resources for learning React?</h4>
+                            <p class="thread-meta">Posted by: StudentA | Category: #academics | 5 replies</p>
+                            <p class="thread-preview">Looking for recommendations on online courses or tutorials for React. Any suggestions?</p>
+                        </div>
+                        <div class="thread-item" data-thread-category="career">
+                            <h4>Tips for acing your first internship interview?</h4>
+                            <p class="thread-meta">Posted by: StudentB | Category: #career | 12 replies</p>
+                            <p class="thread-preview">I have an interview next week for a software engineering internship. Any advice on how to prepare?</p>
+                        </div>
+                        <div class="thread-item" data-thread-category="social">
+                            <h4>Anyone interested in a weekend hike?</h4>
+                            <p class="thread-meta">Posted by: StudentC | Category: #social | 3 replies</p>
+                            <p class="thread-preview">Planning a hike this Saturday. Let me know if you'd like to join!</p>
+                        </div>
+                        <div class="thread-item" data-thread-category="general">
+                        <h4>Welcome new students! Ask anything here.</h4>
+                        <p class="thread-meta">Posted by: Admin | Category: #general | 20 replies</p>
+                        <p class="thread-preview">A warm welcome to all new students joining UniSync! Feel free to ask any questions you have.</p>
+                        </div>
+                        <div class="thread-item" data-thread-category="academics">
+                            <h4>Understanding Big O Notation - simplified explanation needed!</h4>
+                            <p class="thread-meta">Posted by: StudentD | Category: #academics | 8 replies</p>
+                            <p class="thread-preview">I'm struggling with Big O notation. Can someone explain it in a simpler way?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 UniSync. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        const communityCategoryFilter = document.getElementById('community-category');
+        const communityCards = document.querySelectorAll('.community-card');
+
+        communityCategoryFilter.addEventListener('change', () => {
+            const selectedCategory = communityCategoryFilter.value;
+
+            communityCards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                if (selectedCategory === 'all' || selectedCategory === category) {
+                    card.style.display = ''; 
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        const threadCategoryFilter = document.getElementById('thread-category');
+        const threadItems = document.querySelectorAll('.thread-item');
+
+        threadCategoryFilter.addEventListener('change', () => {
+        const selectedCategory = threadCategoryFilter.value;
+
+        threadItems.forEach(item => {
+        const category = item.getAttribute('data-thread-category');
+
+        if (selectedCategory === 'all' || selectedCategory === category) {
+            item.classList.remove('filter-hidden'); // SHOW the item
+        } else {
+            item.classList.add('filter-hidden');    // HIDE the item
+        }
+        });
+    });
+    </script>
+</body>
+</html>

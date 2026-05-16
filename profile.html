@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="UniSync User Profile: View and manage your personal information, interests, and connections.">
+    <meta name="keywords" content="UniSync, profile, user, student, mentor, alumni, interests, contact">
+    <title>Profile - UniSync</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <style>
+        :root {
+            --page-bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-primary: #1f2937; /* gray-800 */
+            --text-secondary: #4b5563; /* gray-600 */
+            --text-tertiary: #6b7280; /* gray-500 */
+            --text-blue: #2563eb; /* blue-600 */
+            --border-light: #e5e7eb; /* gray-200 */
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --border-radius-xl: 0.75rem;
+            --border-radius-lg: 0.5rem;
+        }
+        .container {
+            max-width: 1024px; /* max-w-6xl */
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+    </style>
+
+    <header>
+        <nav>
+            <div class="container">
+                <a href="index.html" class="logo">UniSync</a>
+                <div class="nav-right">
+                    <div class="hamburger-menu">
+                        <div class="line"></div>
+                        <div class="line"></div>
+                        <div class="line"></div>
+                    </div>
+                    <ul class="nav-links">
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="mentorship.html">Mentorship</a></li>
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="community.html">Community</a></li>
+                        <li><a href="profile.html">Profile</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="chat.html">Chat</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                    <div class="auth-buttons">
+                        <a href="login.html" class="btn btn-secondary">Login</a>
+                        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="profile">
+        <section id="profile" class="card">
+            <!-- Banner Image -->
+            <div class="profile-banner">
+                <img src="https://placehold.co/500x50/3b82f6/ffffff?text=Emma Jones" alt="Profile Banner">
+            </div>
+            
+            <!-- Profile Info -->
+            <div class="card-content">
+                <div class="profile-header-flex">
+                    <div class="profile-pic-wrapper">
+                        <img class="profile-pic" 
+                             src="https://placehold.co/150/e0e0e0/333333?text=EJ" 
+                             alt="Profile Picture"
+                             onerror="this.src='https://placehold.co/150/e0e0e0/333333?text=JD'">
+                    </div>
+                
+
+                    <div class="profile-headline">
+                        <h1>Emma Jones</h1>
+                        <p>Computer Science Student at XYZ University</p>
+                        <div class="profile-contact">
+                            <div class="profile-contact-item">
+                                <span>📍</span> 
+                                <span>Mumbai, India</span>
+                            </div>
+                            <div class="profile-contact-item">
+                                <span>📧</span> 
+                                <span>emma.jones@example.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+        </section>
+
+        <div class="card">
+            <div class="card-content">
+                <h2 class="card-title">About Me</h2>
+                <p class="about-text">
+                    Computer Science Student at XYZ University. Passionate about web development, AI, and creating applications
+                    that solve real-world problems. Eager to learn and collaborate on exciting projects.
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2 class="card-title">Experience</h2>
+                <ul class="list-container">
+                    
+                    <li class="list-item">
+                        <img class="item-logo" src="https://placehold.co/60/1e40af/ffffff?text=G" alt="Company Logo">
+                        <div class="item-details">
+                            <h3>Software Engineer Intern</h3>
+                            <p class="item-subtitle">Google</p>
+                            <p class="item-date">Jun 2024 - Aug 2024 · 3 mos</p>
+                            <p class="item-description">
+                                Worked on the Google Cloud team, developing and testing new features for a public-facing API.
+                                Gained experience with large-scale systems and Go.
+                            </p>
+                        </div>
+                    </li>
+        
+                    <li class="list-item">
+                        <img class="item-logo" src="https://placehold.co/60/5b21b6/ffffff?text=LU" alt="Company Logo">
+                        <div class="item-details">
+                            <h3>Web Developer (Freelance)</h3>
+                            <p class="item-subtitle">Local University</p>
+                            <p class="item-date">Jan 2023 - May 2024 · 1 yr 5 mos</p>
+                            <p class="item-description">
+                                Designed and developed a new website for the university's computer science club using React and Tailwind CSS.
+                            </p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-content">
+                <h2 class="card-title">Education</h2>
+                <ul class="list-container">
+                    <li class="list-item">
+                        <img class="item-logo" src="https://placehold.co/60/991b1b/ffffff?text=XYZ" alt="School Logo">
+                        <div class="item-details">
+                            <h3>XYZ University</h3>
+                            <p class="item-subtitle">Bachelor of Technology, Computer Science</p>
+                            <p class="item-date">2022 - 2026 (Expected)</p>
+                            <p class="item-description">
+                                Relevant Coursework: Data Structures & Algorithms, Database Management Systems, Operating Systems, AI Foundations.
+                            </p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2 class="card-title">Certifications</h2>
+                <ul class="list-container">
+                    <li class="list-item">
+                        <img class="item-logo" src="https://placehold.co/60/b91c1c/ffffff?text=AWS" alt="AWS Logo">
+                        <div class="item-details">
+                            <h3>AWS Certified Cloud Practitioner</h3>
+                            <p class="item-subtitle">Amazon Web Services</p>
+                            <p class="item-date">Issued: Aug 2024 · No Expiration</p>
+                            <p class="item-description">
+                                Validated foundational understanding of AWS Cloud concepts, services, and terminology.
+                            </p>
+                        </div>
+                    </li>
+                    <li class="list-item">
+                        <img class="item-logo" src="https://placehold.co/60/0a539c/ffffff?text=GC" alt="Google Cloud Logo">
+                        <div class="item-details">
+                            <h3>Google Cloud Certified - Associate Cloud Engineer</h3>
+                            <p class="item-subtitle">Google Cloud</p>
+                            <p class="item-date">Issued: Dec 2024 · Expires: Dec 2026</p>
+                            <p class="item-description">
+                                Demonstrated ability to deploy applications, monitor operations, and manage enterprise solutions.
+                            </p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2 class="card-title">Skills</h2>
+                <div class="skills-container">
+                    <span class="skill-pill">Web Development</span>
+                    <span class="skill-pill">AI/Machine Learning</span>
+                    <span class="skill-pill">Public Speaking</span>
+                    <span class="skill-pill">Gaming</span>
+                    <span class="skill-pill">JavaScript</span>
+                    <span class="skill-pill">React</span>
+                    <span class="skill-pill">Node.js</span>
+                    <span class="skill-pill">Python</span>
+                    <span class="skill-pill">SQL</span>
+                    <span class="skill-pill">Git</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card my-posts-card">
+            <div class="card-content">
+                <h2 class="card-title">Posts</h2>
+                <ul class="post-list" type="none">
+                    <!-- Post 1 -->
+                    <li class="post-item">
+                        <div class="post-header">
+                            <img class="profile-pic-small" src="https://placehold.co/60/e0e0e0/333333?text=EJ" alt="Your Profile Picture">
+                            <div class="post-info">
+                                <h3>Emma Jones</h3>
+                                <span class="post-date" style="color: #2563eb;">7 hours ago</span>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <p>Just finished my internship presentation at Google! What an amazing experience. Learned so much about large-scale systems and Go. Excited for what's next! #internship #google #webdev</p>
+                        </div>
+                    </li>
+                    <!-- Post 2 -->
+                    <li class="post-item">
+                        <div class="post-header">
+                            <img class="profile-pic-small" src="https://placehold.co/60/e0e0e0/333333?text=EJ" alt="Your Profile Picture">
+                            <div class="post-info">
+                                <h3>Emma Jones</h3>
+                                <span class="post-date" style="color: #2563eb;">1 week ago</span>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <p>Has anyone found good resources for learning React Hooks? Looking for in-depth tutorials, especially on `useCallback` and `useMemo`. All suggestions welcome!</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 UniSync. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

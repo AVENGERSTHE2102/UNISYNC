@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="UniSync Events: Stay updated with the latest campus events, workshops, and hackathons.">
+    <meta name="keywords" content="UniSync, events, workshops, hackathons, seminars, networking, campus activities">
+    <title>Events - UniSync</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <a href="index.html" class="logo">UniSync</a>
+                <div class="nav-right">
+                    <div class="hamburger-menu">
+                        <div class="line"></div>
+                        <div class="line"></div>
+                        <div class="line"></div>
+                    </div>
+                    <ul class="nav-links">
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="mentorship.html">Mentorship</a></li>
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="community.html">Community</a></li>
+                        <li><a href="profile.html">Profile</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="chat.html">Chat</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                    <div class="auth-buttons">
+                        <a href="login.html" class="btn btn-secondary">Login</a>
+                        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="events">
+            <div class="container">
+                <h2 class="section-title">Upcoming Events</h2>
+
+                <div class="filter-bar">
+                    <label for="event-type">Filter by type:</label>
+                    <select id="event-type" name="event-type">
+                        <option value="all">All</option>
+                        <option value="workshop">Workshop</option>
+                        <option value="hackathon">Hackathon</option>
+                        <option value="seminar">Seminar</option>
+                        <option value="networking">Networking</option>
+                    </select>
+                </div>
+
+                <div class="events-grid">
+                    <div class="event-card" data-event-type="hackathon">
+                        <div class="event-date">
+                            <span class="month">SEP</span>
+                            <span class="day">15</span>
+                        </div>
+                        <div class="event-details">
+                            <h3>Innovate & Create: Annual Hackathon</h3>
+                            <p class="event-meta"><strong>Date:</strong> September 15-16, 2025 | <strong>Time:</strong> 9:00 AM - 9:00 PM | <strong>Location:</strong> Main Auditorium</p>
+                            <p>Join us for a 24-hour hackathon and build something amazing. Prizes and glory await!</p>
+                            <a href="#" class="btn btn-primary">Register Now</a>
+                        </div>
+                    </div>
+
+                    <div class="event-card" data-event-type="workshop">
+                        <div class="event-date">
+                            <span class="month">OCT</span>
+                            <span class="day">02</span>
+                        </div>
+                        <div class="event-details">
+                            <h3>AI & Machine Learning Workshop</h3>
+                            <p class="event-meta"><strong>Date:</strong> October 2, 2025 | <strong>Time:</strong> 10:00 AM - 4:00 PM | <strong>Location:</strong> CS Department Lab</p>
+                            <p>An interactive workshop on the fundamentals of AI and Machine Learning. No prior experience required.</p>
+                            <a href="#" class="btn btn-primary">Register Now</a>
+                        </div>
+                    </div>
+
+                    <div class="event-card" data-event-type="networking">
+                        <div class="event-date">
+                            <span class="month">NOV</span>
+                            <span class="day">10</span>
+                        </div>
+                        <div class="event-details">
+                            <h3>Alumni Networking Night</h3>
+                            <p class="event-meta"><strong>Date:</strong> November 10, 2025 | <strong>Time:</strong> 6:00 PM - 9:00 PM | <strong>Location:</strong> University Hall</p>
+                            <p>Connect with our successful alumni and learn from their experiences. A great opportunity to network.</p>
+                            <a href="#" class="btn btn-primary">Register Now</a>
+                        </div>
+                    </div>
+
+                    <div class="event-card" data-event-type="seminar">
+                        <div class="event-date">
+                            <span class="month">DEC</span>
+                            <span class="day">01</span>
+                        </div>
+                        <div class="event-details">
+                            <h3>The Future of Web3 & Blockchain</h3>
+                            <p class="event-meta"><strong>Date:</strong> December 1, 2025 | <strong>Time:</strong> 2:00 PM - 4:00 PM | <strong>Location:</strong> Online</p>
+                            <p>A seminar on the latest trends and technologies in the Web3 and blockchain space. Featuring guest speakers from the industry.</p>
+                            <a href="#" class="btn btn-primary">Register Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 UniSync. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/app.js"></script>
+    </body>
+</html>

@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unisync Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #a1c6ec;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --primary-blue: #2f65f0;
+            --primary-light-blue: #eef2ff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #f1f5f9;
+            
+            --club-blue: #f4f8ff;
+            --club-pink: #fff5f7;
+            --club-purple: #f8f5ff;
+            
+            --btn-blue: #2f65f0;
+            --btn-pink: #f43f5e;
+            --btn-purple: #8b5cf6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Root Layout - Centered Container Structure */
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            max-height: 100vh;
+            padding: 8px; /* Reduced to leave just a little space at viewport extremes */
+            overflow: hidden;
+        }
+
+        /* Master wrapper containing all three main tracks */
+        .app-container {
+            display: flex;
+            width: 100%;
+            max-width: 100%; /* Expanded to stretch to viewport limits */
+            height: 100%;
+            gap: 20px;
+        }
+
+        /* --- LEFT SIDEBAR (STATIC) --- */
+        .sidebar {
+            width: 240px;
+            height: 100%;
+            background: var(--sidebar-bg);
+            border-radius: 20px;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.01);
+            flex-shrink: 0;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 28px;
+            padding-left: 8px;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            list-style: none;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.active a {
+            background-color: var(--primary-light-blue);
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .nav-item a:hover:not(.active a) {
+            background-color: #f1f5f9;
+            color: var(--text-dark);
+        }
+
+        /* Quick Action Graphic Frame styling */
+        .quick-action-box {
+            background: linear-gradient(180deg, #f8fafc 0%, #edf2f7 100%);
+            border-radius: 16px;
+            padding: 14px;
+            margin-top: auto;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .quick-action-box h4 {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+
+        .qa-vector-graphic {
+            height: 65px;
+            margin: 0 auto 10px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .qa-vector-graphic i.fa-laptop { font-size: 36px; color: #cbd5e1; }
+        .qa-vector-graphic i.fa-user-graduate { font-size: 26px; color: #475569; position: absolute; bottom: 8px; }
+
+        .qa-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .qa-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 8px 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .qa-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+        }
+
+        .qa-btn i { font-size: 11px; }
+        .qa-btn.purple i { color: #8b5cf6; }
+        .qa-btn.green i { color: #10b981; }
+        .qa-btn.blue i { color: #3b82f6; }
+
+
+        /* --- MIDDLE PORTION --- */
+        .center-content {
+            flex: 1;
+            max-width: none; /* Allowed content area to expand dynamically */
+            height: 100%;
+            overflow-y: auto;
+            padding-right: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .center-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        .center-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .center-content::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        /* Top Bar Section */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 10px 16px 10px 38px;
+            border: 1px solid #e2e8f0;
+            background-color: #fff;
+            border-radius: 20px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .notification-bell {
+            background: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background-color: #ef4444;
+            color: white;
+            font-size: 8px;
+            font-weight: bold;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        /* Welcome Banner Card Layout Match */
+        .welcome-banner {
+            background: linear-gradient(135deg, #f5f9ff 0%, #eef5ff 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 24px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .welcome-text h1 {
+            font-size: 21px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-dark);
+        }
+
+        .welcome-text p {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-bottom: 16px;
+            max-width: 320px;
+            line-height: 1.4;
+        }
+
+        .primary-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .welcome-graphic-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            opacity: 0.8;
+            margin-right: 15px;
+        }
+        .welcome-graphic-stack i.fa-graduation-cap { font-size: 40px; color: #1e293b; margin-bottom: -5px; }
+        .welcome-graphic-stack .book-line { width: 50px; height: 8px; border-radius: 2px; background-color: #3b82f6; }
+        .welcome-graphic-stack .book-line.pink { width: 45px; background-color: #ec4899; }
+        .welcome-graphic-stack .book-line.purple { width: 52px; background-color: #8b5cf6; }
+
+        /* General Section Frame Layouts */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .section-header h3 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .view-all-link {
+            font-size: 11px;
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .cards-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        /* Club Dynamic Grid Layout */
+        .club-card {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 150px;
+        }
+
+        .club-card.blue { border-top: 3px solid var(--btn-blue); }
+        .club-card.pink { border-top: 3px solid var(--btn-pink); }
+        .club-card.purple { border-top: 3px solid var(--btn-purple); }
+
+        .club-icon-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .club-details h4 {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .club-details p {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .club-graphics { font-size: 20px; }
+        .club-card.blue .club-graphics { color: #f97316; }
+        .club-card.pink .club-graphics { color: #ec4899; }
+        .club-card.purple .club-graphics { color: #3b82f6; }
+
+        .club-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .avatar-group { display: flex; align-items: center; }
+        .avatar-group img {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 1.5px solid white;
+            margin-left: -5px;
+        }
+        .avatar-group img:first-child { margin-left: 0; }
+
+        .avatar-counter {
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-left: 4px;
+        }
+
+        .action-sm-btn {
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            text-align: center;
+        }
+        .club-card.blue .action-sm-btn { background-color: var(--btn-blue); }
+        .club-card.pink .action-sm-btn { background-color: var(--btn-pink); }
+        .club-card.purple .action-sm-btn { background-color: var(--btn-purple); }
+
+        /* Career Hub Styles */
+        .job-card {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 160px;
+            position: relative;
+        }
+
+        .job-header {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .job-logo {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .job-info h4 {
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .job-info span {
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+
+        .bookmark-icon {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            color: #cbd5e1;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .job-meta-data {
+            margin-top: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .job-card .action-sm-btn {
+            width: 100%;
+            margin-top: 6px;
+        }
+        .job-card:nth-child(1) .action-sm-btn { background-color: var(--btn-blue); }
+        .job-card:nth-child(2) .action-sm-btn { background-color: var(--btn-pink); }
+        .job-card:nth-child(3) .action-sm-btn { background-color: var(--btn-purple); }
+
+        /* People Directory Layout Grid */
+        .people-card {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .people-card img.profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 6px;
+        }
+
+        .people-card h4 { font-size: 11px; font-weight: 700; }
+        .people-card p {
+            font-size: 9px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .mutual-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .mutual-bar span { font-size: 9px; color: var(--text-muted); }
+
+        .connect-btn {
+            background-color: var(--primary-light-blue);
+            color: var(--primary-blue);
+            border: none;
+            width: 100%;
+            padding: 6px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+
+        /* --- RIGHT SIDE PANEL (STATIC) --- */
+        .right-panel {
+            width: 270px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            flex-shrink: 0;
+        }
+
+        .profile-summary-card {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .user-avatar-container {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 8px;
+        }
+
+        .user-avatar-container img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .status-dot {
+            position: absolute;
+            bottom: 1px;
+            right: 1px;
+            width: 10px;
+            height: 10px;
+            background-color: #10b981;
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+
+        .profile-summary-card h3 { font-size: 13px; font-weight: 700; }
+        .profile-summary-card p {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .profile-summary-card .profile-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            width: 80%;
+            padding: 7px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        /* Calendar Block Matrix Configuration */
+        .calendar-card {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 14px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .calendar-header i { color: var(--text-muted); font-size: 10px; cursor: pointer; }
+
+        .calendar-days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .calendar-numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 16px 2px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .day-num {
+            padding: 3px 0;
+            cursor: pointer;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            margin: 0 auto;
+        }
+
+        .day-num.muted { color: #cbd5e1; }
+        .day-num.active-blue { background-color: var(--primary-blue); color: white; font-weight: 600; }
+        .day-num.active-pink { background-color: #fda4af; color: #9f1239; font-weight: 600; }
+
+        /* Reminders Widget Frame */
+        .reminders-card {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 14px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .reminder-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+            overflow-y: auto;
+        }
+
+        .reminder-item { display: flex; align-items: center; gap: 10px; }
+
+        .reminder-icon-box {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            flex-shrink: 0;
+        }
+        .reminder-item:nth-child(1) .reminder-icon-box { background-color: #eff6ff; color: #3b82f6; }
+        .reminder-item:nth-child(2) .reminder-icon-box { background-color: #ecfdf5; color: #10b981; }
+        .reminder-item:nth-child(3) .reminder-icon-box { background-color: #f5f3ff; color: #8b5cf6; }
+        .reminder-item:nth-child(4) .reminder-icon-box { background-color: #fff7ed; color: #f97316; }
+
+        .reminder-details h5 { font-size: 11px; font-weight: 700; margin-bottom: 1px; }
+        .reminder-details p { font-size: 9px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <aside class="sidebar">
+            <div>
+                <div class="logo-area">
+                    <div class="logo-icon"><i class="fa-solid fa-layer-group"></i></div>
+                    <span>Unisync</span>
+                </div>
+                
+                <ul class="nav-menu">
+                    <li class="nav-item active">
+                        <a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="community.html"><i class="fa-solid fa-users"></i> Community</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="mentorship.html"><i class="fa-solid fa-user-tie"></i> Mentorship</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="jobs.html"><i class="fa-solid fa-briefcase"></i> Job</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="chat.html"><i class="fa-solid fa-comment-dots"></i> Chat</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="about.html"><i class="fa-solid fa-circle-info"></i> About</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="quick-action-box">
+                <h4>Quick Action</h4>
+                <div class="qa-vector-graphic">
+                    <i class="fa-solid fa-laptop"></i>
+                    <i class="fa-solid fa-user-graduate"></i>
+                </div>
+                <div class="qa-list">
+                <a href="community.html" class="qa-btn purple">
+                    <i class="fa-solid fa-circle-question"></i> Ask Question
+                </a>
+                <a href="mentorship.html" class="qa-btn green">
+                    <i class="fa-solid fa-user-plus"></i> Find a Mentor
+                </a>
+                <a href="chat.html" class="qa-btn blue">
+                    <i class="fa-solid fa-envelope"></i> Check Messages
+                </a>
+            </div>
+            </div>
+        </aside>
+
+        <main class="center-content">
+            
+            <div class="top-bar">
+                <div class="search-container">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search anything...">
+                </div>
+                <div class="notification-bell">
+                    <i class="fa-regular fa-bell"></i>
+                    <div class="notification-badge">3</div>
+                </div>
+            </div>
+
+            <div class="welcome-banner">
+                <div class="welcome-text">
+                    <h1>Welcome back, Arjun! 👋</h1>
+                    <p>Explore opportunities, connect with peers, and make the most of your campus experience.</p>
+                    <button class="primary-btn">Explore Now</button>
+                </div>
+                <div class="welcome-graphic-stack">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <div class="book-line"></div>
+                    <div class="book-line pink"></div>
+                    <div class="book-line purple"></div>
+                </div>
+            </div>
+
+            <section>
+                <div class="section-header">
+                    <h3>Suggested Clubs for You</h3>
+                    <a href="#" class="view-all-link">View All</a>
+                </div>
+                <div class="cards-row">
+                    <div class="club-card blue">
+                        <div class="club-icon-top">
+                            <div class="club-details">
+                                <h4>Basketball Club</h4>
+                                <p>Game. Train. Win.</p>
+                            </div>
+                            <div class="club-graphics"><i class="fa-solid fa-basketball"></i></div>
+                        </div>
+                        <div class="club-footer">
+                            <div class="avatar-group">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="user">
+                                <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=100&q=80" alt="user">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="user">
+                                <span class="avatar-counter">+40</span>
+                            </div>
+                            <button class="action-sm-btn">Join Club</button>
+                        </div>
+                    </div>
+                    <div class="club-card pink">
+                        <div class="club-icon-top">
+                            <div class="club-details">
+                                <h4>Drama Club</h4>
+                                <p>Act. Express. Inspire.</p>
+                            </div>
+                            <div class="club-graphics"><i class="fa-solid fa-masks-theater"></i></div>
+                        </div>
+                        <div class="club-footer">
+                            <div class="avatar-group">
+                                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="user">
+                                <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=100&q=80" alt="user">
+                                <img src="https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&w=100&q=80" alt="user">
+                                <span class="avatar-counter">+18</span>
+                            </div>
+                            <button class="action-sm-btn">Join Club</button>
+                        </div>
+                    </div>
+                    <div class="club-card purple">
+                        <div class="club-icon-top">
+                            <div class="club-details">
+                                <h4>Photography Club</h4>
+                                <p>Capture. Create. Share.</p>
+                            </div>
+                            <div class="club-graphics"><i class="fa-solid fa-camera"></i></div>
+                        </div>
+                        <div class="club-footer">
+                            <div class="avatar-group">
+                                <img src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&fit=crop&w=100&q=80" alt="user">
+                                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=100&q=80" alt="user">
+                                <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=100&q=80" alt="user">
+                                <span class="avatar-counter">+30</span>
+                            </div>
+                            <button class="action-sm-btn">Join Club</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="section-header">
+                    <h3>Career Hub</h3>
+                    <a href="#" class="view-all-link">View All</a>
+                </div>
+                <div class="cards-row">
+                    <div class="job-card">
+                        <i class="fa-regular fa-star bookmark-icon"></i>
+                        <div class="job-header">
+                            <div class="job-logo" style="background-color: #2563eb;"><i class="fa-solid fa-play"></i></div>
+                            <div class="job-info">
+                                <h4>UI/UX Designer Intern</h4>
+                                <span>TechNova Solutions</span>
+                            </div>
+                        </div>
+                        <div class="job-meta-data">
+                            <div class="meta-item"><i class="fa-solid fa-briefcase"></i> Internship</div>
+                            <div class="meta-item"><i class="fa-solid fa-location-dot"></i> Bangalore, India</div>
+                        </div>
+                        <button class="action-sm-btn">Apply Now</button>
+                    </div>
+                    <div class="job-card">
+                        <i class="fa-regular fa-star bookmark-icon"></i>
+                        <div class="job-header">
+                            <div class="job-logo" style="background-color: #0f172a;">un</div>
+                            <div class="job-info">
+                                <h4>Campus Ambassador</h4>
+                                <span>Unstop</span>
+                            </div>
+                        </div>
+                        <div class="job-meta-data">
+                            <div class="meta-item"><i class="fa-solid fa-clock"></i> Part-time</div>
+                            <div class="meta-item"><i class="fa-solid fa-location-dot"></i> Remote</div>
+                        </div>
+                        <button class="action-sm-btn">Apply Now</button>
+                    </div>
+                    <div class="job-card">
+                        <i class="fa-regular fa-star bookmark-icon"></i>
+                        <div class="job-header">
+                            <div class="job-logo" style="background-color: #10b981;"><i class="fa-solid fa-chart-pie"></i></div>
+                            <div class="job-info">
+                                <h4>Marketing Intern</h4>
+                                <span>Brandify</span>
+                            </div>
+                        </div>
+                        <div class="job-meta-data">
+                            <div class="meta-item"><i class="fa-solid fa-briefcase"></i> Internship</div>
+                            <div class="meta-item"><i class="fa-solid fa-location-dot"></i> Mumbai, India</div>
+                        </div>
+                        <button class="action-sm-btn">Apply Now</button>
+                    </div>
+                </div>
+            </section>
+
+            <section style="padding-bottom: 10px;">
+                <div class="section-header">
+                    <h3>People You May Know</h3>
+                    <a href="#" class="view-all-link">View All</a>
+                </div>
+                <div class="cards-row">
+                    <div class="people-card">
+                        <img class="profile-pic" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80" alt="Riya">
+                        <h4>Riya Sharma</h4>
+                        <p>Computer Science</p>
+                        <div class="mutual-bar">
+                            <div class="avatar-group">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=50&q=80" alt="m">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=50&q=80" alt="m">
+                            </div>
+                            <span>12 mutual</span>
+                        </div>
+                        <button class="connect-btn">Connect</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <aside class="right-panel">
+            <div class="profile-summary-card">
+                <div class="user-avatar-container">
+                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=150&q=80" alt="Arjun">
+                    <div class="status-dot"></div>
+                </div>
+                <h3>Arjun Mehta</h3>
+                <p>B.Tech CSE · Year 3</p>
+                <button class="profile-btn">View Profile</button>
+            </div>
+
+            <div class="calendar-card">
+                <div class="calendar-header">
+                    <span>May 2026</span>
+                    <div>
+                        <i class="fa-solid fa-chevron-left" style="margin-right: 8px;"></i>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                </div>
+                <div class="calendar-days-grid">
+                    <span>SU</span><span>MO</span><span>TU</span><span>WE</span><span>TH</span><span>FR</span><span>SA</span>
+                </div>
+                <div class="calendar-numbers-grid">
+                    <span class="day-num muted">26</span><span class="day-num muted">27</span><span class="day-num muted">28</span><span class="day-num muted">29</span><span class="day-num muted">30</span><span>1</span><span>2</span>
+                    <span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span>
+                    <span>10</span><span>11</span><span>12</span><span>13</span><span class="day-num active-pink">14</span><span>15</span><span class="day-num active-blue">16</span>
+                    <span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span>
+                    <span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span>
+                    <span>31</span><span class="day-num muted">1</span><span class="day-num muted">2</span><span class="day-num muted">3</span><span class="day-num muted">4</span><span class="day-num muted">5</span><span class="day-num muted">6</span>
+                </div>
+            </div>
+
+            <div class="reminders-card">
+                <div class="section-header">
+                    <h3>Upcoming Tasks</h3>
+                    <a href="#" class="view-all-link">See All</a>
+                </div>
+                <div class="reminder-list">
+                    <div class="reminder-item">
+                        <div class="reminder-icon-box"><i class="fa-solid fa-code"></i></div>
+                        <div class="reminder-details">
+                            <h5>Hackathon Project</h5>
+                            <p>Today, 06:00 PM</p>
+                        </div>
+                    </div>
+                    <div class="reminder-item">
+                        <div class="reminder-icon-box"><i class="fa-solid fa-basketball"></i></div>
+                        <div class="reminder-details">
+                            <h5>Basketball Practice</h5>
+                            <p>Tomorrow, 07:00 AM</p>
+                        </div>
+                    </div>
+                    <div class="reminder-item">
+                        <div class="reminder-icon-box"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="reminder-details">
+                            <h5>Mentorship Session</h5>
+                            <p>19 May, 04:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+</body>
+</html>

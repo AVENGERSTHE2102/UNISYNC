@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="UniSync Chat: Real-time messaging with your peers, mentors, and alumni.">
+    <meta name="keywords" content="UniSync, chat, messaging, real-time, communication, students, mentors, alumni">
+    <title>Chat - UniSync</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* Add basic styles to hide inactive chats */
+        .chat-conversation-messages {
+            display: none; /* Hide all chat message blocks by default */
+        }
+        .chat-conversation-messages.active {
+            display: block; /* Show only the active one */
+        }
+        .conversation-list li {
+            cursor: pointer; /* Indicate sidebar items are clickable */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <a href="index.html" class="logo">UniSync</a>
+                <div class="nav-right">
+                    <div class="hamburger-menu">
+                        <div class="line"></div>
+                        <div class="line"></div>
+                        <div class="line"></div>
+                    </div>
+                    <ul class="nav-links">
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="mentorship.html">Mentorship</a></li>
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="community.html">Community</a></li>
+                        <li><a href="profile.html">Profile</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="chat.html">Chat</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                    <div class="auth-buttons">
+                        <a href="login.html" class="btn btn-secondary">Login</a>
+                        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="chat">
+            <div class="container">
+                <h2 class="section-title">Real-time Chat</h2>
+
+                <div class="chat-container">
+                    <div class="chat-sidebar">
+                        <h3>Conversations</h3>
+                        <ul class="conversation-list">
+                            <li class="active" data-chat="john-doe">
+                                <img src="https://placehold.co/50x50/e0e0e0/333333?text=JD" alt="Profile picture of Mentor John Doe">
+                                <div class="conversation-info">
+                                    <h4>Mentor John Doe</h4>
+                                    <p>Hey, how's your project going?</p>
+                                </div>
+                            </li>
+                            <li data-chat="dsa-group">
+                                <img src="https://placehold.co/50x50/e0e0e0/333333?text=DSA" alt="Profile picture of Study Group - DSA">
+                                <div class="conversation-info">
+                                    <h4>Study Group - DSA</h4>
+                                    <p>Anyone free for a study session?</p>
+                                </div>
+                            </li>
+                            <li data-chat="jane-smith">
+                                <img src="https://placehold.co/50x50/e0e0e0/333333?text=JS" alt="Profile picture of Jane Smith">
+                                <div class="conversation-info">
+                                    <h4>Jane Smith</h4>
+                                    <p>Thanks for the help!</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="chat-main">
+                        <div class="chat-header">
+                            <img id="chat-header-img" src="https://placehold.co/50x50/e0e0e0/333333?text=JD" alt="Profile picture of active chat">
+                            <h4 id="chat-header-name">Mentor John Doe</h4>
+                        </div>
+                        <div class="chat-messages">
+
+                            <!-- === Chat Messages for John Doe === -->
+                            <div class="chat-conversation-messages active" data-chat-id="john-doe">
+                                <div class="message received">
+                                    <p>Hi, how's your project going? Do you need any help with the new feature?</p>
+                                    <span class="timestamp">10:00 AM</span>
+                                </div>
+                                <div class="message sent">
+                                    <p>Hey John! It's going well, thanks. I'm a bit stuck on the authentication part. Can we connect later?</p>
+                                    <span class="timestamp">10:05 AM</span>
+                                </div>
+                                <div class="message received">
+                                    <p>Sure, I'm free around 3 PM today. Let me know if that works for you.</p>
+                                    <span class="timestamp">10:07 AM</span>
+                                </div>
+                                <div class="message sent">
+                                    <p>Perfect! See you then. Thanks a lot!</p>
+                                    <span class="timestamp">10:08 AM</span>
+                                </div>
+                            </div>
+
+                            <!-- === Chat Messages for DSA Group === -->
+                            <div class="chat-conversation-messages" data-chat-id="dsa-group">
+                                <div class="message received">
+                                    <p>Anyone free for a study session on linked lists tonight?</p>
+                                    <span class="timestamp">Yesterday 8:15 PM</span>
+                                </div>
+                                <div class="message sent">
+                                    <p>I can join around 9 PM.</p>
+                                    <span class="timestamp">Yesterday 8:20 PM</span>
+                                </div>
+                                <div class="message received">
+                                     <p>Cool, let's meet in the library study room then.</p>
+                                     <span class="timestamp">Yesterday 8:21 PM</span>
+                                 </div>
+                                <!-- New messages added below -->
+                                <div class="message received">
+                                     <p>Works for me. I'll bring my notes on tree traversal too, just in case.</p>
+                                     <span class="timestamp">Yesterday 8:22 PM</span>
+                                 </div>
+                                 <div class="message sent">
+                                     <p>Great idea. See you all soon.</p>
+                                     <span class="timestamp">Yesterday 8:25 PM</span>
+                                 </div>
+                            </div>
+
+                            <!-- === Chat Messages for Jane Smith === -->
+                            <div class="chat-conversation-messages" data-chat-id="jane-smith">
+                                <div class="message sent">
+                                    <p>Hey Jane, I found that article we were talking about. Here's the link: [link]</p>
+                                    <span class="timestamp">Tuesday 11:30 AM</span>
+                                </div>
+                                <div class="message received">
+                                    <p>Awesome, thanks so much for sending it over!</p>
+                                    <span class="timestamp">Tuesday 11:35 AM</span>
+                                </div>
+                                <div class="message sent">
+                                    <p>No problem! Let me know what you think.</p>
+                                     <span class="timestamp">Tuesday 11:36 AM</span>
+                                 </div>
+                                 <!-- New messages added below -->
+                                 <div class="message received">
+                                     <p>Will do! This is super helpful for the assignment. 🙏</p>
+                                     <span class="timestamp">Tuesday 11:37 AM</span>
+                                 </div>
+                            </div>
+
+                        </div>
+                        <div class="chat-input">
+                            <input type="text" placeholder="Type a message...">
+                            <button class="btn btn-primary">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 UniSync. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const conversationListItems = document.querySelectorAll('.conversation-list li');
+            const chatHeaderImg = document.getElementById('chat-header-img');
+            const chatHeaderName = document.getElementById('chat-header-name');
+            const chatMessageBlocks = document.querySelectorAll('.chat-conversation-messages');
+
+            conversationListItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    // 1. Update Sidebar Active State
+                    conversationListItems.forEach(li => li.classList.remove('active'));
+                    item.classList.add('active');
+
+                    // 2. Get Data from Clicked Item
+                    const chatId = item.getAttribute('data-chat');
+                    const profileImgSrc = item.querySelector('img').src;
+                    const conversationName = item.querySelector('h4').textContent;
+
+                    // 3. Update Chat Header
+                    chatHeaderImg.src = profileImgSrc;
+                    chatHeaderImg.alt = `Profile picture of ${conversationName}`; // Update alt text
+                    chatHeaderName.textContent = conversationName;
+
+                    // 4. Switch Visible Chat Messages
+                    chatMessageBlocks.forEach(block => {
+                        if (block.getAttribute('data-chat-id') === chatId) {
+                            block.classList.add('active');
+                        } else {
+                            block.classList.remove('active');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

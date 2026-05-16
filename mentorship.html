@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="UniSync Mentorship: Connect with experienced seniors and alumni for guidance and mentorship.">
+    <meta name="keywords" content="UniSync, mentorship, mentors, alumni, guidance, career, academic, student, expert">
+    <title>Mentorship - UniSync</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <a href="index.html" class="logo">UniSync</a>
+                <div class="nav-right">
+                    <div class="hamburger-menu">
+                        <div class="line"></div>
+                        <div class="line"></div>
+                        <div class="line"></div>
+                    </div>
+                    <ul class="nav-links">
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="mentorship.html">Mentorship</a></li>
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="community.html">Community</a></li>
+                        <li><a href="profile.html">Profile</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="chat.html">Chat</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                    <div class="auth-buttons">
+                        <a href="login.html" class="btn btn-secondary">Login</a>
+                        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="mentorship">
+            <div class="container">
+                <h2 class="section-title">Find Your Mentor</h2>
+
+                <div class="filter-bar">
+                    <label for="mentor-expertise">Filter by expertise:</label>
+                    <select id="mentor-expertise" name="mentor-expertise">
+                        <option value="all">All</option>
+                        <option value="webdev">Web Development</option>
+                        <option value="appdev">App Development</option>
+                        <option value="ai-ml">AI/Machine Learning</option>
+                        <option value="data-science">Data Science</option>
+                        <option value="cybersecurity">Cybersecurity</option>
+                        <option value="entrepreneurship">Entrepreneurship</option>
+                    </select>
+                </div>
+
+                <div class="mentorship-grid">
+                    <div class="mentor-card" data-expertise="webdev">
+                        <img src="https://placehold.co/300x300/e0e0e0/333333?text=JD" alt="John Doe, Software Engineer at Google">
+                        <h3>John Doe</h3>
+                        <p class="mentor-role">Software Engineer at Google</p>
+                        <p class="mentor-bio">I'm a full-stack developer with 5 years of experience in building web applications. I can help you with JavaScript, React, Node.js, and more.</p>
+                        <div class="mentor-skills">
+                            <span>JavaScript</span>
+                            <span>React</span>
+                            <span>Node.js</span>
+                        </div>
+                        <a href="#" class="btn btn-primary">Connect</a>
+                    </div>
+
+                    <div class="mentor-card" data-expertise="appdev">
+                        <img src="https://placehold.co/300x300/e0e0e0/333333?text=JS" alt="Jane Smith, iOS Developer at Apple">
+                        <h3>Jane Smith</h3>
+                        <p class="mentor-role">iOS Developer at Apple</p>
+                        <p class="mentor-bio">I'm an iOS developer with a passion for creating beautiful and user-friendly mobile apps. I can help you with Swift, SwiftUI, and mobile UI/UX design.</p>
+                        <div class="mentor-skills">
+                            <span>Swift</span>
+                            <span>SwiftUI</span>
+                            <span>iOS Development</span>
+                        </div>
+                        <a href="#" class="btn btn-primary">Connect</a>
+                    </div>
+
+                    <div class="mentor-card" data-expertise="ai-ml">
+                        <img src="https://placehold.co/300x300/e0e0e0/333333?text=SW" alt="Sam Wilson, Machine Learning Engineer at Netflix">
+                        <h3>Sam Wilson</h3>
+                        <p class="mentor-role">Machine Learning Engineer at Netflix</p>
+                        <p class="mentor-bio">I work on recommendation systems at Netflix. I can help you with Python, TensorFlow, and building machine learning models.</p>
+                        <div class="mentor-skills">
+                            <span>Python</span>
+                            <span>TensorFlow</span>
+                            <span>Machine Learning</span>
+                        </div>
+                        <a href="#" class="btn btn-primary">Connect</a>
+                    </div>
+
+                    <div class="mentor-card" data-expertise="data-science">
+                        <img src="https://placehold.co/300x300/e0e0e0/333333?text=EB" alt="Emily Brown, Data Scientist at Spotify">
+                        <h3>Emily Brown</h3>
+                        <p class="mentor-role">Data Scientist at Spotify</p>
+                        <p class="mentor-bio">I use data to understand user behavior and improve the Spotify experience. I can help you with SQL, Python, and data visualization.</p>
+                        <div class="mentor-skills">
+                            <span>SQL</span>
+                            <span>Python</span>
+                            <span>Data Visualization</span>
+                        </div>
+                        <a href="#" class="btn btn-primary">Connect</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 UniSync. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/app.js"></script>
+    </body>
+</html>

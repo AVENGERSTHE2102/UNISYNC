@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="UniSync Sign Up: Create your account to connect with peers, mentors, and access resources.">
+    <meta name="keywords" content="UniSync, sign up, register, student, mentor, alumni, account, platform">
+    <title>Sign Up - UniSync</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: white !important;
+  box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.1) inset !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;;
+}
+
+input[type="text"] 
+input[type="email"],
+input[type="password"]
+input[type="number"] 
+input[type="select"]
+input[type="file"] {
+  background:none;  
+  border: none;
+  font-size: medium;
+}
+input::placeholder {
+  color: rgba(255, 255, 255, 0.8);
+
+}
+        
+        /* --- Custom Dropdown Styles --- */
+        
+        /* Styles the main container */
+        .custom-dropdown {
+          position: relative;
+        }
+
+        /* Styles the fake "input box" you click */
+        .dropdown-selected {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 12px 16px; /* A bit more padding */
+          border-radius: 25px; /* Fully rounded */
+          
+          /* Your Glassy Styles */
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+          
+          color: white;
+          cursor: pointer;
+          transition: border-color 0.2s;
+        }
+        
+        .dropdown-selected:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Styles the text inside the box (e.g., "Select interests") */
+        .dropdown-selected span {
+          white-space: nowrap; /* Prevents "Select interests" from wrapping */
+          overflow: hidden;
+          text-overflow: ellipsis; /* Adds "..." if text is too long */
+          padding-right: 10px;
+        }
+
+        /* Styles the dropdown list that appears */
+        .dropdown-options {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: calc(100% + 8px); /* 8px space */
+          width: 250px;
+          
+          /* Glassy list background */
+          background: rgba(0, 0, 0, 0.4);
+          backdrop-filter: blur(5px);
+          
+          border-radius: 10px;
+          padding: 8px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          max-height: 250px;
+          overflow-y: auto;
+          z-index: 100;
+        }
+
+        /* Styles the group labels (e.g., "Technical") */
+        .opt-group-label {
+          color: #000000; 
+          font-size: 11px;
+          text-transform: uppercase;
+          font-weight: 600;
+          padding: 10px 8px 2px 8px;
+        }
+
+        /* Styles each individual option */
+        .opt {
+          padding: 8px 12px;
+          border-radius: 8px;
+          color: #dff8ff;
+          cursor: pointer;
+          margin-top: 2px;
+          font-size: 14px;
+        }
+        
+        /* Style for hovering over an option */
+        .opt:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Styles a *selected* option */
+        .opt.selected {
+          background: rgba(77, 208, 177, 0.2);
+          border: 1px solid rgba(77, 208, 177, 0.3);
+          font-weight: 600;
+        }
+
+</style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <a href="index.html" class="logo">UniSync</a>
+                <div class="nav-right">
+                    <div class="hamburger-menu">
+                        <div class="line"></div>
+                        <div class="line"></div>
+                        <div class="line"></div>
+                    </div>
+                    <ul class="nav-links">
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="mentorship.html">Mentorship</a></li>
+                        <li><a href="jobs.html">Jobs</a></li>
+                        <li><a href="community.html">Community</a></li>
+                        <li><a href="profile.html">Profile</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="chat.html">Chat</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                    <div class="auth-buttons">
+                        <a href="login.html" class="btn btn-secondary">Login</a>
+                        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="login-container">
+        <div class="login-box">
+            <h2>Create Your UniSync Account</h2>
+            <form id="signup-form">
+                <div class="input-group">
+                    <input type="text" id="name" name="name" required placeholder="Name" class="input" autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <input type="email" id="email" name="email" required placeholder="Email" class="input" autocomplete="off">
+                    <div id="email-feedback" class="feedback"></div>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" required placeholder="Password" class="input"autocomplete="off" >
+                    <div id="password-feedback" class="feedback"></div>
+                </div>
+                <div class="input-group">
+                    <label for="user-type">I am a:</label>
+                    <select type="select" id="user-type" name="user-type" class="input" >
+                        <option value="student" style="color: black;">Student</option>
+                        <option value="alumni" style="color: black;">Alumni/Industry Expert</option>
+                    </select>
+                </div>
+
+                <div id="student-fields">
+                    <div class="input-group">
+                        <input type="number" id="year" name="year" min="1" max="5" placeholder="Year of Study" class="input" autocomplete="off" >
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="branch" name="branch" placeholder="Branch/Major" class="input" autocomplete="off" >
+                    </div>
+                </div>
+
+                <div id="alumni-fields" style="display: none;">
+                    <div class="input-group">
+                        <input type="text" id="company" name="company" placeholder="Company" class="input" autocomplete="off" >
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="role" name="role" placeholder="Role"placeholder="Role" class="input" autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="input-group">
+        <label for="interests">Interests</label>
+        <div id="custom-dropdown-container" class="custom-dropdown input">
+        </div>
+        <select type="select" id="interests" name="interests" multiple class="input" style="display: none;">
+            <optgroup label="Technical">
+                <option value="webdev">Web Development</option>
+                <option value="appdev">App Development</option>
+                <option value="ai-ml">AI/Machine Learning</option>
+                <option value="data-science">Data Science</option>
+                <option value="cybersecurity">Cybersecurity</option>
+                <option value="blockchain">Blockchain</option>
+                <option value="cloud-computing">Cloud Computing</option>
+                <option value="robotics">Robotics</option>
+                <option value="iot">Internet of Things (IoT)</option>
+                <option value="competitive-programming">Competitive Programming</option>
+            </optgroup>
+            <optgroup label="Non-Technical">
+                <option value="public-speaking">Public Speaking</option>
+                <option value="entrepreneurship">Entrepreneurship</option>
+                <option value="content-creation">Content Creation</option>
+                <option value="marketing">Marketing</option>
+                <option value="finance">Finance</option>
+                <option value="design">UI/UX Design</option>
+            </optgroup>
+            <optgroup label="Hobbies & Fun">
+                <option value="music">Music</option>
+                <option value="sports">Sports</option>
+                <option value="gaming">Gaming</option>
+                <option value="photography">Photography</option>
+                <option value="reading">Reading</option>
+            </optgroup>
+        </select>
+    </div>
+
+                <div class="input-group">
+                    <label for="profile-pic">Profile Picture</label>
+                    <input type="file" id="profile-pic" name="profile-pic" class="input">
+                </div>
+
+                <button type="submit" class="btn btn-primary glass-box">Sign Up</button>
+            </form>
+            <p class="signup-link">Already have an account? <a href="login.html" style="color: white;">Login</a></p>
+        </div>
+    </div>
+
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn">&times;</span>
+            <p id="popup-message"></p>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- 1. SETUP ---
+            // Find the hidden <select> and the empty <div> container
+            const realSelect = document.querySelector('select#interests');
+            const container = document.querySelector('#custom-dropdown-container');
+
+            // If it can't find them, stop the script
+            if (!realSelect || !container) {
+                console.error("Could not find select or container for custom dropdown.");
+                return;
+            }
+            
+            // --- 2. BUILD THE CUSTOM HTML ---
+            
+            // A. Create the "fake input box" (the toggle)
+            const toggle = document.createElement('div');
+            toggle.className = 'dropdown-selected';
+            // Start with "Select interests" and add the arrow
+            toggle.innerHTML = `<span id="selectedText">Select interests</span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink:0; opacity:.85"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+            
+            // B. Create the hidden "options" list
+            const optsWrap = document.createElement('div');
+            optsWrap.className = 'dropdown-options';
+            optsWrap.style.display = 'none'; // Start hidden
+            
+            // Add the new elements to our container
+            container.appendChild(toggle);
+            container.appendChild(optsWrap);
+            
+            // Get a reference to the text span
+            const selectedTextEl = container.querySelector('#selectedText');
+
+            
+            // --- 3. READ YOUR <optgroup>s AND <option>s ---
+            
+            // Loop over each <optgroup> in your hidden <select>
+            realSelect.querySelectorAll('optgroup').forEach(optgroup => {
+                
+                // Create a styled <div> for the group label
+                const label = document.createElement('div');
+                label.className = 'opt-group-label';
+                label.textContent = optgroup.label;
+                optsWrap.appendChild(label); // Add "Technical", etc. to the list
+                
+                // Loop over each <option> inside that group
+                optgroup.querySelectorAll('option').forEach(option => {
+                    
+                    // Create a styled, clickable <div> for this option
+                    const opt = document.createElement('div');
+                    opt.className = 'opt';
+                    opt.textContent = option.textContent;
+                    opt.dataset.value = option.value; // Store "webdev", "appdev", etc.
+                    optsWrap.appendChild(opt);
+                    
+
+                    // --- 4. HANDLE CLICKS ON AN OPTION ---
+                    opt.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Stop click from bubbling up to the toggle
+                        
+                        // Toggle the '.selected' class on the <div>
+                        opt.classList.toggle('selected');
+                        
+                        // Sync this click with the hidden <select>
+                        // This is CRUCIAL for form submission
+                        option.selected = opt.classList.contains('selected');
+                        
+                        // Update the "Select interests" text
+                        updateSelectedText();
+                    });
+                });
+            });
+
+            
+            // --- 5. HELPER FUNCTION to update the text ---
+            function updateSelectedText() {
+                // Get all the *real* <option> tags that are selected
+                const selectedOptions = Array.from(realSelect.querySelectorAll('option:checked'));
+                
+                // Get their text (e.g., "Web Development")
+                const selectedTexts = selectedOptions.map(opt => opt.textContent);
+                
+                if (selectedTexts.length === 0) {
+                    selectedTextEl.textContent = 'Select interests';
+                } else if (selectedTexts.length > 2) {
+                    // If more than 2, just show a count
+                    selectedTextEl.textContent = `${selectedTexts.length} interests selected`;
+                } else {
+                    // Otherwise, show the names
+                    selectedTextEl.textContent = selectedTexts.join(', ');
+                }
+            }
+
+            
+            // --- 6. HANDLE OPEN/CLOSE OF THE DROPDOWN ---
+            
+            // A. When you click the main box...
+            toggle.addEventListener('click', (e) => {
+                e.stopPropagation(); // Stop click from bubbling up to document
+                const isHidden = optsWrap.style.display === 'none';
+                
+                // Close other dropdowns on the page (if any) - good practice
+                document.querySelectorAll('.dropdown-options').forEach(d => {
+                    // Don't close our own one
+                    if (d !== optsWrap) {
+                        d.style.display = 'none';
+                    }
+                });
+                
+                if (isHidden) {
+                    optsWrap.style.display = 'block'; // Toggle this one open
+                } else {
+                    optsWrap.style.display = 'none'; // Toggle this one closed
+                }
+            });
+
+            // B. When you click *anywhere else on the page*...
+            document.addEventListener('click', (e) => {
+                // If the click was *not* inside our dropdown container
+                if (!container.contains(e.target)) {
+                    optsWrap.style.display = 'none'; // Hide the list
+                }
+            });
+        
+        }); // End DOMContentLoaded
+    </script>
+</body>
+</html>
