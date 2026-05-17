@@ -3,13 +3,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // 1. FIREBASE CORE CONFIGURATION & INITIALIZATION
     // =========================================================================
     const firebaseConfig = {
-        apiKey: "AIzaSyBisnMbh5D7gsMm0aNCnWRhNGsC1F5kzJQ",
-        authDomain: "unisync-3cf23.firebaseapp.com",
-        projectId: "unisync-3cf23",
-        storageBucket: "unisync-3cf23.firebasestorage.app",
-        messagingSenderId: "1086287124355",
-        appId: "1:1086287124355:web:d761ae9437c188150648b6",
-        measurementId: "G-97YHJ4EXHF"
+        apiKey: "YOUR_FIREBASE_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID"
     };
     
     // Check to prevent accidental double initialization
