@@ -1,136 +1,840 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="UniSync Jobs: Discover exclusive internship and job opportunities from our network of alumni and partners.">
-    <meta name="keywords" content="UniSync, jobs, internships, career, opportunities, students, alumni, industry">
-    <title>Jobs - UniSync</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jobs – Unisync</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #3B6FE8;
+      --blue-light: #5B8DF6;
+      --purple: #7C5CFC;
+      --pink: #F45B8B;
+      --green: #22C97A;
+      --bg: #F0F4FF;
+      --sidebar-bg: #fff;
+      --card-bg: #fff;
+      --text: #1A1D2E;
+      --muted: #6B7280;
+      --border: #E5E9F5;
+      --radius: 14px;
+      --shadow: 0 2px 16px rgba(59,111,232,0.08);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 220px;
+      min-height: 100vh;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 16px;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 10;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: var(--blue);
+      margin-bottom: 36px;
+      padding-left: 6px;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-size: 1rem;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: all 0.2s;
+      margin-bottom: 2px;
+    }
+    .nav-item:hover { background: var(--bg); color: var(--blue); }
+    .nav-item.active {
+      background: linear-gradient(135deg, #EEF3FF, #F0EAFF);
+      color: var(--blue);
+      font-weight: 700;
+    }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    /* ── Main ── */
+    .main {
+      margin-left: 220px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky; top: 0; z-index: 5;
+    }
+    .search-box {
+      flex: 1;
+      max-width: 440px;
+      display: flex;
+      align-items: center;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 14px;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .search-box input {
+      border: none; background: transparent; outline: none;
+      font-family: inherit; font-size: 0.9rem; color: var(--text); width: 100%;
+    }
+    .search-box input::placeholder { color: var(--muted); }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+    .notif-btn {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; position: relative;
+    }
+    .notif-badge {
+      position: absolute; top: 4px; right: 4px;
+      width: 8px; height: 8px;
+      background: var(--pink); border-radius: 50%;
+      border: 1.5px solid #fff;
+    }
+
+    /* ── Content layout ── */
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 24px;
+      padding: 28px;
+      align-items: start;
+    }
+
+    /* ── Hero banner ── */
+    .hero {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 32px 36px;
+      color: var(--text);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+    .hero::after {
+      content: '💼';
+      position: absolute;
+      right: 48px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 5.5rem;
+      opacity: 0.08;
+    }
+    .hero h1 { font-size: 1.45rem; font-weight: 800; margin-bottom: 8px; color: var(--text); }
+    .hero p { font-size: 0.88rem; color: var(--muted); max-width: 420px; line-height: 1.6; }
+    .hero-btn {
+      margin-top: 18px;
+      display: inline-block;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 10px 22px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .hero-btn:hover { opacity: 0.9; }
+
+    /* ── Section header ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .section-header h2 { font-size: 1.05rem; font-weight: 700; }
+    .view-all {
+      font-size: 0.82rem;
+      color: var(--blue);
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* ── Filter chips ── */
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .chip {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .chip.active, .chip:hover {
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: #fff;
+      border-color: transparent;
+    }
+
+    /* ── Job cards row (Career Hub style) ── */
+    .job-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .job-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 16px 14px 14px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      transition: transform 0.18s, box-shadow 0.18s;
+      position: relative;
+    }
+    .job-card:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(59,111,232,0.13); }
+
+    .jc-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    .company-logo {
+      width: 38px; height: 38px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; font-weight: 800; color: #fff;
+      flex-shrink: 0;
+    }
+    .jc-info { flex: 1; min-width: 0; }
+    .job-title { font-size: 0.88rem; font-weight: 700; margin-bottom: 1px; }
+    .company-name { font-size: 0.75rem; color: var(--muted); }
+    .save-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 1rem; padding: 0;
+      transition: color 0.18s;
+      flex-shrink: 0;
+    }
+    .save-btn:hover { color: var(--blue); }
+    .save-btn.saved { color: var(--blue); }
+
+    .job-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+    .job-tag {
+      font-size: 0.68rem; font-weight: 600;
+      padding: 2px 8px; border-radius: 10px;
+      background: #EEF3FF; color: var(--blue);
+    }
+    .job-tag.green { background: #E8FFF3; color: var(--green); }
+    .job-tag.pink  { background: #FFF0F6; color: var(--pink); }
+    .job-tag.purple{ background: #F0EAFF; color: var(--purple); }
+
+    .jc-meta {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.72rem; color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .jc-meta span { display: flex; align-items: center; gap: 3px; }
+    .dot-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--border); }
+
+    .apply-btn {
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.18s;
+      margin-top: auto;
+    }
+    .apply-btn:hover { opacity: 0.85; }
+    .btn-blue   { background: linear-gradient(135deg, var(--blue), var(--blue-light)); color: #fff; }
+    .btn-pink   { background: linear-gradient(135deg, var(--pink), #ff7eb3); color: #fff; }
+    .btn-purple { background: linear-gradient(135deg, var(--purple), #9b7eff); color: #fff; }
+    .btn-green  { background: linear-gradient(135deg, var(--green), #4de89a); color: #fff; }
+    .btn-orange { background: linear-gradient(135deg, #F97316, #FB923C); color: #fff; }
+
+    /* ── Applied Jobs row ── */
+    .applied-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .applied-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: var(--shadow);
+      transition: transform 0.18s;
+    }
+    .applied-card:hover { transform: translateY(-2px); }
+    .ac-top { display: flex; align-items: center; gap: 8px; }
+    .ac-logo {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+    .ac-title { font-size: 0.85rem; font-weight: 700; }
+    .ac-company { font-size: 0.72rem; color: var(--muted); }
+    .ac-meta { font-size: 0.72rem; color: var(--muted); }
+    .status-badge {
+      font-size: 0.68rem; font-weight: 700;
+      padding: 3px 9px; border-radius: 8px;
+      align-self: flex-start;
+    }
+    .status-review  { background: #FFF8E8; color: #D97706; }
+    .status-short   { background: #E8FFF3; color: var(--green); }
+    .status-applied { background: #EEF3FF; color: var(--blue); }
+
+    /* ── Right panel ── */
+    .right-panel { display: flex; flex-direction: column; gap: 20px; }
+    .panel-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .panel-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 14px; }
+
+    /* Profile card */
+    .profile-info { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .profile-avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1.1rem; font-weight: 800;
+    }
+    .profile-name { font-weight: 700; font-size: 0.95rem; }
+    .profile-sub { font-size: 0.78rem; color: var(--muted); }
+    .profile-btn {
+      width: 100%; padding: 10px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: #fff; border: none; border-radius: 8px;
+      font-family: inherit; font-weight: 700; font-size: 0.85rem;
+      cursor: pointer; transition: opacity 0.18s;
+    }
+    .profile-btn:hover { opacity: 0.88; }
+
+    /* Stats */
+    .stats-row { display: flex; gap: 10px; }
+    .stat-box {
+      flex: 1; background: var(--bg);
+      border-radius: 10px; padding: 12px; text-align: center;
+    }
+    .stat-box .val { font-size: 1.3rem; font-weight: 800; color: var(--blue); }
+    .stat-box .lbl { font-size: 0.7rem; color: var(--muted); font-weight: 500; }
+
+    /* Quick actions */
+    .quick-actions { display: flex; flex-direction: column; gap: 8px; }
+    .qa-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px;
+      background: var(--bg); cursor: pointer;
+      font-size: 0.85rem; font-weight: 600; color: var(--text);
+      text-decoration: none; transition: background 0.18s;
+    }
+    .qa-item:hover { background: #E0E9FF; }
+    .qa-dot {
+      width: 28px; height: 28px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; flex-shrink: 0;
+    }
+
+    /* Trending companies */
+    .company-item {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 12px;
+    }
+    .company-item:last-child { margin-bottom: 0; }
+    .ci-logo {
+      width: 34px; height: 34px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.78rem; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+    .ci-info { flex: 1; }
+    .ci-name { font-size: 0.84rem; font-weight: 700; }
+    .ci-open { font-size: 0.7rem; color: var(--muted); }
+    .ci-btn {
+      font-size: 0.73rem; font-weight: 700;
+      padding: 5px 12px; border-radius: 7px;
+      border: 1.5px solid var(--blue);
+      color: var(--blue); background: transparent;
+      cursor: pointer; transition: all 0.18s;
+    }
+    .ci-btn:hover { background: var(--blue); color: #fff; }
+
+    /* Avatar colors */
+    .av-blue   { background: linear-gradient(135deg,#3B6FE8,#5B8DF6); }
+    .av-pink   { background: linear-gradient(135deg,#F45B8B,#ff7eb3); }
+    .av-green  { background: linear-gradient(135deg,#22C97A,#4de89a); }
+    .av-purple { background: linear-gradient(135deg,#7C5CFC,#9b7eff); }
+    .av-orange { background: linear-gradient(135deg,#F97316,#FB923C); }
+    .av-teal   { background: linear-gradient(135deg,#0EA5E9,#38BDF8); }
+  </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="container">
-                <a href="index.html" class="logo">UniSync</a>
-                <div class="nav-right">
-                    <div class="hamburger-menu">
-                        <div class="line"></div>
-                        <div class="line"></div>
-                        <div class="line"></div>
-                    </div>
-                    <ul class="nav-links">
-                        <li><a href="events.html">Events</a></li>
-                        <li><a href="mentorship.html">Mentorship</a></li>
-                        <li><a href="jobs.html">Jobs</a></li>
-                        <li><a href="community.html">Community</a></li>
-                        <li><a href="profile.html">Profile</a></li>
-                        <li><a href="dashboard.html">Dashboard</a></li>
-                        <li><a href="chat.html">Chat</a></li>
-                        <li><a href="about.html">About</a></li>
-                    </ul>
-                    <div class="auth-buttons">
-                        <a href="login.html" class="btn btn-secondary">Login</a>
-                        <a href="signup.html" class="btn btn-primary">Sign Up</a>
-                    </div>
-                </div>
+
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+    </div>
+    Unisync
+  </div>
+
+  <a href="dashboard.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </a>
+  <a href="community.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Community
+  </a>
+  <a href="mentorship.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/><path d="M12 12v9"/></svg>
+    Mentorship
+  </a>
+  <a href="jobs.html" class="nav-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+    Job
+  </a>
+  <a href="chat.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Chat
+  </a>
+  <a href="about.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+    About
+  </a>
+</aside>
+
+<!-- ── Main ── -->
+<div class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search jobs, companies, roles…"/>
+    </div>
+    <div class="topbar-right">
+      <div class="notif-btn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <div class="left-col">
+
+      <!-- Hero -->
+      <div class="hero">
+        <h1>Find Your Dream Job 🚀</h1>
+        <p>Explore internships, part-time roles & full-time opportunities curated for campus students across top companies.</p>
+        <a href="#" class="hero-btn">Upload Resume</a>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <div class="chip active">All</div>
+        <div class="chip">Internship</div>
+        <div class="chip">Full-time</div>
+        <div class="chip">Part-time</div>
+        <div class="chip">Remote</div>
+        <div class="chip">On-site</div>
+        <div class="chip">Stipend ₹10k+</div>
+      </div>
+
+      <!-- Featured Jobs -->
+      <div class="section-header">
+        <h2>Featured Jobs for You</h2>
+        <a class="view-all" href="#">View All</a>
+      </div>
+      <div class="job-row">
+
+        <div class="job-card">
+          <div class="jc-top">
+            <div class="company-logo av-blue">UI</div>
+            <div class="jc-info">
+              <div class="job-title">UI/UX Designer Intern</div>
+              <div class="company-name">TechNova Solutions</div>
             </div>
-        </nav>
-    </header>
-
-    <main>
-        <section id="jobs">
-            <div class="container">
-                <h2 class="section-title">Internship & Job Opportunities</h2>
-
-                <div class="filter-bar">
-                    <label for="job-type">Filter by type:</label>
-                    <select id="job-type" name="job-type">
-                        <option value="all">All</option>
-                        <option value="internship">Internship</option>
-                        <option value="full-time">Full-time</option>
-                        <option value="part-time">Part-time</option>
-                    </select>
-                </div>
-
-                <div class="jobs-list">
-                    <div class="job-item" data-job-type="internship">
-                        <div class="job-info">
-                            <h3>Software Engineer Intern</h3>
-                            <p class="job-company">Google</p>
-                            <p class="job-location">Mountain View, CA</p>
-                        </div>
-                        <div class="job-details-toggle">
-                            <a href="#" class="btn btn-secondary">View Details</a>
-                        </div>
-                    </div>
-                    <div class="job-description">
-                        <h4>Job Description</h4>
-                        <p>This is an internship position for a software engineer. You will be working on exciting projects and contributing to Google's products.</p>
-                        <h4>Required Skills</h4>
-                        <ul>
-                            <li>Proficiency in Java, C++, or Python</li>
-                            <li>Strong understanding of data structures and algorithms</li>
-                            <li>Excellent problem-solving skills</li>
-                        </ul>
-                        <a href="#" class="btn btn-primary apply-btn">Apply Now</a>
-                    </div>
-
-                    <div class="job-item" data-job-type="full-time">
-                        <div class="job-info">
-                            <h3>Product Manager</h3>
-                            <p class="job-company">Microsoft</p>
-                            <p class="job-location">Redmond, WA</p>
-                        </div>
-                        <div class="job-details-toggle">
-                            <a href="#" class="btn btn-secondary">View Details</a>
-                        </div>
-                    </div>
-                    <div class="job-description">
-                        <h4>Job Description</h4>
-                        <p>As a Product Manager, you will be responsible for the product planning and execution throughout the Product Lifecycle.</p>
-                        <h4>Required Skills</h4>
-                        <ul>
-                            <li>5+ years of experience in product management</li>
-                            <li>Excellent communication and leadership skills</li>
-                            <li>Strong technical background</li>
-                        </ul>
-                        <a href="#" class="btn btn-primary apply-btn">Apply Now</a>
-                    </div>
-
-                    <div class="job-item" data-job-type="part-time">
-                        <div class="job-info">
-                            <h3>Data Analyst</h3>
-                            <p class="job-company">Facebook</p>
-                            <p class="job-location">Menlo Park, CA</p>
-                        </div>
-                        <div class="job-details-toggle">
-                            <a href="#" class="btn btn-secondary">View Details</a>
-                        </div>
-                    </div>
-                    <div class="job-description">
-                        <h4>Job Description</h4>
-                        <p>We are looking for a Data Analyst to join our team. You will be responsible for analyzing large datasets and providing valuable insights.</p>
-                        <h4>Required Skills</h4>
-                        <ul>
-                            <li>Proficiency in SQL and Python</li>
-                            <li>Experience with data visualization tools like Tableau</li>
-                            <li>Strong analytical and problem-solving skills</li>
-                        </ul>
-                        <a href="#" class="btn btn-primary apply-btn">Apply Now</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 UniSync. All rights reserved.</p>
+            <button class="save-btn" title="Save">☆</button>
+          </div>
+          <div class="job-tags">
+            <span class="job-tag green">Internship</span>
+            <span class="job-tag">Design</span>
+            <span class="job-tag">Figma</span>
+          </div>
+          <div class="jc-meta">
+            <span>📍 Bangalore, India</span>
+            <span class="dot-sep"></span>
+            <span>₹15k/mo</span>
+          </div>
+          <button class="apply-btn btn-blue">Apply Now</button>
         </div>
-    </footer>
 
-    <script src="assets/js/app.js"></script>
-    </body>
+        <div class="job-card">
+          <div class="jc-top">
+            <div class="company-logo av-pink">CA</div>
+            <div class="jc-info">
+              <div class="job-title">Campus Ambassador</div>
+              <div class="company-name">Unstop</div>
+            </div>
+            <button class="save-btn" title="Save">☆</button>
+          </div>
+          <div class="job-tags">
+            <span class="job-tag pink">Part-time</span>
+            <span class="job-tag">Marketing</span>
+            <span class="job-tag">Social</span>
+          </div>
+          <div class="jc-meta">
+            <span>🌐 Work from Anywhere</span>
+            <span class="dot-sep"></span>
+            <span>₹8k/mo</span>
+          </div>
+          <button class="apply-btn btn-pink">Apply Now</button>
+        </div>
+
+        <div class="job-card">
+          <div class="jc-top">
+            <div class="company-logo av-green">MI</div>
+            <div class="jc-info">
+              <div class="job-title">Marketing Intern</div>
+              <div class="company-name">Brandify</div>
+            </div>
+            <button class="save-btn" title="Save">☆</button>
+          </div>
+          <div class="job-tags">
+            <span class="job-tag green">Internship</span>
+            <span class="job-tag">Marketing</span>
+            <span class="job-tag">SEO</span>
+          </div>
+          <div class="jc-meta">
+            <span>📍 Mumbai, India</span>
+            <span class="dot-sep"></span>
+            <span>₹12k/mo</span>
+          </div>
+          <button class="apply-btn btn-green">Apply Now</button>
+        </div>
+
+      </div>
+
+      <!-- Row 2 -->
+      <div class="job-row" style="margin-top:-10px;">
+
+        <div class="job-card">
+          <div class="jc-top">
+            <div class="company-logo av-purple">SDE</div>
+            <div class="jc-info">
+              <div class="job-title">SDE Intern</div>
+              <div class="company-name">Razorpay</div>
+            </div>
+            <button class="save-btn" title="Save">☆</button>
+          </div>
+          <div class="job-tags">
+            <span class="job-tag green">Internship</span>
+            <span class="job-tag">Backend</span>
+            <span class="job-tag">Go</span>
+          </div>
+          <div class="jc-meta">
+            <span>📍 Bangalore, India</span>
+            <span class="dot-sep"></span>
+            <span>₹40k/mo</span>
+          </div>
+          <button class="apply-btn btn-purple">Apply Now</button>
+        </div>
+
+        <div class="job-card">
+          <div class="jc-top">
+            <div class="company-logo av-orange">DA</div>
+            <div class="jc-info">
+              <div class="job-title">Data Analyst Intern</div>
+              <div class="company-name">Swiggy</div>
+            </div>
+            <button class="save-btn" title="Save">☆</button>
+          </div>
+          <div class="job-tags">
+            <span class="job-tag green">Internship</span>
+            <span class="job-tag">SQL</span>
+            <span class="job-tag">Python</span>
+          </div>
+          <div class="jc-meta">
+            <span>📍 Hyderabad, India</span>
+            <span class="dot-sep"></span>
+            <span>₹20k/mo</span>
+          </div>
+          <button class="apply-btn btn-orange">Apply Now</button>
+        </div>
+
+        <div class="job-card">
+          <div class="jc-top">
+            <div class="company-logo av-teal">PM</div>
+            <div class="jc-info">
+              <div class="job-title">Product Mgmt Intern</div>
+              <div class="company-name">Meesho</div>
+            </div>
+            <button class="save-btn" title="Save">☆</button>
+          </div>
+          <div class="job-tags">
+            <span class="job-tag green">Internship</span>
+            <span class="job-tag">Product</span>
+            <span class="job-tag">Strategy</span>
+          </div>
+          <div class="jc-meta">
+            <span>🌐 Remote</span>
+            <span class="dot-sep"></span>
+            <span>₹25k/mo</span>
+          </div>
+          <button class="apply-btn btn-blue">Apply Now</button>
+        </div>
+
+      </div>
+
+      <!-- My Applications -->
+      <div class="section-header">
+        <h2>My Applications</h2>
+        <a class="view-all" href="#">View All</a>
+      </div>
+      <div class="applied-row">
+
+        <div class="applied-card">
+          <div class="ac-top">
+            <div class="ac-logo av-blue">UI</div>
+            <div>
+              <div class="ac-title">UI/UX Designer Intern</div>
+              <div class="ac-company">TechNova Solutions</div>
+            </div>
+          </div>
+          <div class="ac-meta">📅 Applied May 10, 2025</div>
+          <span class="status-badge status-review">Under Review</span>
+        </div>
+
+        <div class="applied-card">
+          <div class="ac-top">
+            <div class="ac-logo av-green">MI</div>
+            <div>
+              <div class="ac-title">Marketing Intern</div>
+              <div class="ac-company">Brandify</div>
+            </div>
+          </div>
+          <div class="ac-meta">📅 Applied May 8, 2025</div>
+          <span class="status-badge status-short">Shortlisted ✓</span>
+        </div>
+
+        <div class="applied-card">
+          <div class="ac-top">
+            <div class="ac-logo av-pink">CA</div>
+            <div>
+              <div class="ac-title">Campus Ambassador</div>
+              <div class="ac-company">Unstop</div>
+            </div>
+          </div>
+          <div class="ac-meta">📅 Applied May 5, 2025</div>
+          <span class="status-badge status-applied">Applied</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ── Right Panel ── -->
+    <div class="right-panel">
+
+      <!-- Profile -->
+      <div class="panel-card">
+        <div class="profile-info">
+          <div class="profile-avatar">AM</div>
+          <div>
+            <div class="profile-name">Arjun Mehta</div>
+            <div class="profile-sub">B.Tech 2nd Year</div>
+          </div>
+        </div>
+        <button class="profile-btn">View Profile</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="panel-card">
+        <h3>Your Stats</h3>
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="val">3</div>
+            <div class="lbl">Applied</div>
+          </div>
+          <div class="stat-box">
+            <div class="val">1</div>
+            <div class="lbl">Shortlisted</div>
+          </div>
+          <div class="stat-box">
+            <div class="val">5</div>
+            <div class="lbl">Saved</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="panel-card">
+        <h3>Quick Actions</h3>
+        <div class="quick-actions">
+          <a href="#" class="qa-item">
+            <div class="qa-dot" style="background:#EEF3FF;">📄</div>
+            Upload Resume
+          </a>
+          <a href="#" class="qa-item">
+            <div class="qa-dot" style="background:#F0EAFF;">🔖</div>
+            Saved Jobs
+          </a>
+          <a href="#" class="qa-item">
+            <div class="qa-dot" style="background:#FFF0F6;">📊</div>
+            Track Applications
+          </a>
+          <a href="#" class="qa-item">
+            <div class="qa-dot" style="background:#EFFFF6;">🎯</div>
+            Set Job Alerts
+          </a>
+        </div>
+      </div>
+
+      <!-- Trending Companies -->
+      <div class="panel-card">
+        <h3>Trending Companies</h3>
+        <div class="company-item">
+          <div class="ci-logo av-blue">G</div>
+          <div class="ci-info">
+            <div class="ci-name">Google</div>
+            <div class="ci-open">12 open roles</div>
+          </div>
+          <button class="ci-btn">View</button>
+        </div>
+        <div class="company-item">
+          <div class="ci-logo av-orange">M</div>
+          <div class="ci-info">
+            <div class="ci-name">Microsoft</div>
+            <div class="ci-open">8 open roles</div>
+          </div>
+          <button class="ci-btn">View</button>
+        </div>
+        <div class="company-item">
+          <div class="ci-logo av-pink">R</div>
+          <div class="ci-info">
+            <div class="ci-name">Razorpay</div>
+            <div class="ci-open">5 open roles</div>
+          </div>
+          <button class="ci-btn">View</button>
+        </div>
+        <div class="company-item">
+          <div class="ci-logo av-green">S</div>
+          <div class="ci-info">
+            <div class="ci-name">Swiggy</div>
+            <div class="ci-open">6 open roles</div>
+          </div>
+          <button class="ci-btn">View</button>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+  // Filter chip toggle
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+
+  // Save button toggle
+  document.querySelectorAll('.save-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      if (this.textContent === '☆') {
+        this.textContent = '★';
+        this.classList.add('saved');
+      } else {
+        this.textContent = '☆';
+        this.classList.remove('saved');
+      }
+    });
+  });
+
+  // Apply button feedback
+  document.querySelectorAll('.apply-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      if (this.textContent === 'Apply Now') {
+        this.textContent = 'Applied ✓';
+        this.style.opacity = '0.7';
+        this.disabled = true;
+      }
+    });
+  });
+
+  // Company view btn
+  document.querySelectorAll('.ci-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      this.textContent = 'Opened';
+      this.style.background = 'var(--blue)';
+      this.style.color = '#fff';
+    });
+  });
+</script>
+</body>
 </html>
