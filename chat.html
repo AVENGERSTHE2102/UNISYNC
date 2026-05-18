@@ -1,215 +1,869 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="UniSync Chat: Real-time messaging with your peers, mentors, and alumni.">
-    <meta name="keywords" content="UniSync, chat, messaging, real-time, communication, students, mentors, alumni">
-    <title>Chat - UniSync</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-        /* Add basic styles to hide inactive chats */
-        .chat-conversation-messages {
-            display: none; /* Hide all chat message blocks by default */
-        }
-        .chat-conversation-messages.active {
-            display: block; /* Show only the active one */
-        }
-        .conversation-list li {
-            cursor: pointer; /* Indicate sidebar items are clickable */
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat – Unisync</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #3B6FE8;
+      --blue-light: #5B8DF6;
+      --purple: #7C5CFC;
+      --pink: #F45B8B;
+      --green: #22C97A;
+      --bg: #F0F4FF;
+      --sidebar-bg: #fff;
+      --card-bg: #fff;
+      --text: #1A1D2E;
+      --muted: #6B7280;
+      --border: #E5E9F5;
+      --radius: 14px;
+      --shadow: 0 2px 16px rgba(59,111,232,0.08);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 220px;
+      min-height: 100vh;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 16px;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 10;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: var(--blue);
+      margin-bottom: 36px;
+      padding-left: 6px;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1rem;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: all 0.2s;
+      margin-bottom: 2px;
+    }
+    .nav-item:hover { background: var(--bg); color: var(--blue); }
+    .nav-item.active {
+      background: linear-gradient(135deg, #EEF3FF, #F0EAFF);
+      color: var(--blue);
+      font-weight: 700;
+    }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    /* ── Main ── */
+    .main {
+      margin-left: 220px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky; top: 0; z-index: 5;
+    }
+    .search-box {
+      flex: 1;
+      max-width: 440px;
+      display: flex;
+      align-items: center;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 14px;
+      gap: 8px;
+    }
+    .search-box input {
+      border: none; background: transparent; outline: none;
+      font-family: inherit; font-size: 0.9rem; color: var(--text); width: 100%;
+    }
+    .search-box input::placeholder { color: var(--muted); }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+    .notif-btn {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; position: relative;
+    }
+    .notif-badge {
+      position: absolute; top: 4px; right: 4px;
+      width: 8px; height: 8px;
+      background: var(--pink); border-radius: 50%;
+      border: 1.5px solid #fff;
+    }
+
+    /* ── Chat Layout ── */
+    .chat-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr 260px;
+      gap: 0;
+      height: calc(100vh - 65px);
+      overflow: hidden;
+    }
+
+    /* ── Conversations Panel ── */
+    .conv-panel {
+      background: #fff;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .conv-header {
+      padding: 18px 16px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .conv-header h2 { font-size: 1rem; font-weight: 700; margin-bottom: 12px; }
+    .conv-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 8px 12px;
+    }
+    .conv-search input {
+      border: none; background: transparent; outline: none;
+      font-family: inherit; font-size: 0.82rem; color: var(--text); width: 100%;
+    }
+    .conv-search input::placeholder { color: var(--muted); }
+
+    .conv-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 10px 16px 0;
+    }
+    .conv-tab {
+      flex: 1;
+      text-align: center;
+      padding: 7px 0;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.18s;
+    }
+    .conv-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+    }
+    .conv-list::-webkit-scrollbar { width: 4px; }
+    .conv-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .conv-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+      position: relative;
+    }
+    .conv-item:hover { background: var(--bg); }
+    .conv-item.active { background: #EEF3FF; }
+
+    .conv-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 800; color: #fff;
+      flex-shrink: 0; position: relative;
+    }
+    .online-dot {
+      position: absolute; bottom: 1px; right: 1px;
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--green); border: 1.5px solid #fff;
+    }
+    .conv-meta { flex: 1; min-width: 0; }
+    .conv-name { font-size: 0.85rem; font-weight: 700; margin-bottom: 2px; }
+    .conv-preview {
+      font-size: 0.74rem; color: var(--muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .conv-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+    .conv-time { font-size: 0.68rem; color: var(--muted); }
+    .unread-badge {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--blue);
+      color: #fff; font-size: 0.62rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ── Message Area ── */
+    .msg-area {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .msg-topbar {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .msg-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82rem; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+    .msg-name { font-size: 0.92rem; font-weight: 700; }
+    .msg-status { font-size: 0.72rem; color: var(--green); font-weight: 600; }
+    .msg-actions { margin-left: auto; display: flex; gap: 8px; }
+    .msg-action-btn {
+      width: 34px; height: 34px; border-radius: 9px;
+      background: var(--bg); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 0.95rem;
+      transition: background 0.18s;
+    }
+    .msg-action-btn:hover { background: #E0E9FF; }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .messages::-webkit-scrollbar { width: 4px; }
+    .messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* date divider */
+    .date-divider {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.72rem; color: var(--muted); font-weight: 600;
+    }
+    .date-divider::before, .date-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    .msg-row { display: flex; gap: 8px; align-items: flex-end; }
+    .msg-row.me { flex-direction: row-reverse; }
+
+    .bubble-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+    .bubble {
+      max-width: 62%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 0.83rem;
+      line-height: 1.55;
+      position: relative;
+    }
+    .bubble.them {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+      color: var(--text);
+    }
+    .bubble.me {
+      background: linear-gradient(135deg, var(--blue), var(--blue-light));
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .bubble-time {
+      font-size: 0.64rem;
+      opacity: 0.6;
+      margin-top: 4px;
+      display: block;
+      text-align: right;
+    }
+
+    /* typing indicator */
+    .typing {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.75rem; color: var(--muted);
+    }
+    .typing-dots { display: flex; gap: 3px; }
+    .typing-dots span {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--muted);
+      animation: bounce 1.2s infinite;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-5px); }
+    }
+
+    /* Input box */
+    .msg-input-wrap {
+      background: #fff;
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .input-attach {
+      width: 34px; height: 34px; border-radius: 9px;
+      background: var(--bg); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1rem; flex-shrink: 0;
+      transition: background 0.18s;
+    }
+    .input-attach:hover { background: #E0E9FF; }
+    .msg-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      color: var(--text);
+      outline: none;
+      resize: none;
+    }
+    .msg-input::placeholder { color: var(--muted); }
+    .send-btn {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--blue), var(--blue-light));
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: opacity 0.18s;
+    }
+    .send-btn:hover { opacity: 0.88; }
+
+    /* ── Right Info Panel ── */
+    .info-panel {
+      background: #fff;
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 20px 16px;
+      gap: 20px;
+    }
+    .info-panel::-webkit-scrollbar { width: 4px; }
+    .info-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .info-profile {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .info-avatar {
+      width: 56px; height: 56px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 800; color: #fff;
+      margin-bottom: 10px;
+    }
+    .info-name { font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; }
+    .info-role { font-size: 0.75rem; color: var(--muted); margin-bottom: 10px; }
+    .info-status {
+      font-size: 0.72rem; font-weight: 700;
+      color: var(--green); background: #E8FFF3;
+      padding: 3px 10px; border-radius: 8px;
+    }
+
+    .info-section h4 {
+      font-size: 0.8rem; font-weight: 700;
+      color: var(--muted); margin-bottom: 10px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+
+    .shared-files { display: flex; flex-direction: column; gap: 8px; }
+    .file-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px;
+      background: var(--bg); border-radius: 9px;
+      font-size: 0.78rem;
+    }
+    .file-icon {
+      width: 28px; height: 28px; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; flex-shrink: 0;
+    }
+    .file-name { font-weight: 600; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-size { font-size: 0.68rem; color: var(--muted); }
+
+    .mutual-list { display: flex; flex-direction: column; gap: 8px; }
+    .mutual-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.8rem;
+    }
+    .mutual-av {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.62rem; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+    .mutual-name { font-weight: 600; }
+    .mutual-role { font-size: 0.7rem; color: var(--muted); }
+
+    /* Avatar colors */
+    .av-blue   { background: linear-gradient(135deg,#3B6FE8,#5B8DF6); }
+    .av-pink   { background: linear-gradient(135deg,#F45B8B,#ff7eb3); }
+    .av-green  { background: linear-gradient(135deg,#22C97A,#4de89a); }
+    .av-purple { background: linear-gradient(135deg,#7C5CFC,#9b7eff); }
+    .av-orange { background: linear-gradient(135deg,#F97316,#FB923C); }
+    .av-teal   { background: linear-gradient(135deg,#0EA5E9,#38BDF8); }
+  </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="container">
-                <a href="index.html" class="logo">UniSync</a>
-                <div class="nav-right">
-                    <div class="hamburger-menu">
-                        <div class="line"></div>
-                        <div class="line"></div>
-                        <div class="line"></div>
-                    </div>
-                    <ul class="nav-links">
-                        <li><a href="events.html">Events</a></li>
-                        <li><a href="mentorship.html">Mentorship</a></li>
-                        <li><a href="jobs.html">Jobs</a></li>
-                        <li><a href="community.html">Community</a></li>
-                        <li><a href="profile.html">Profile</a></li>
-                        <li><a href="dashboard.html">Dashboard</a></li>
-                        <li><a href="chat.html">Chat</a></li>
-                        <li><a href="about.html">About</a></li>
-                    </ul>
-                    <div class="auth-buttons">
-                        <a href="login.html" class="btn btn-secondary">Login</a>
-                        <a href="signup.html" class="btn btn-primary">Sign Up</a>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
 
-    <main>
-        <section id="chat">
-            <div class="container">
-                <h2 class="section-title">Real-time Chat</h2>
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+    </div>
+    Unisync
+  </div>
+  <a href="dashboard.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </a>
+  <a href="community.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Community
+  </a>
+  <a href="mentorship.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/><path d="M12 12v9"/></svg>
+    Mentorship
+  </a>
+  <a href="jobs.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+    Job
+  </a>
+  <a href="chat.html" class="nav-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Chat
+  </a>
+  <a href="about.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+    About
+  </a>
+</aside>
 
-                <div class="chat-container">
-                    <div class="chat-sidebar">
-                        <h3>Conversations</h3>
-                        <ul class="conversation-list">
-                            <li class="active" data-chat="john-doe">
-                                <img src="https://placehold.co/50x50/e0e0e0/333333?text=JD" alt="Profile picture of Mentor John Doe">
-                                <div class="conversation-info">
-                                    <h4>Mentor John Doe</h4>
-                                    <p>Hey, how's your project going?</p>
-                                </div>
-                            </li>
-                            <li data-chat="dsa-group">
-                                <img src="https://placehold.co/50x50/e0e0e0/333333?text=DSA" alt="Profile picture of Study Group - DSA">
-                                <div class="conversation-info">
-                                    <h4>Study Group - DSA</h4>
-                                    <p>Anyone free for a study session?</p>
-                                </div>
-                            </li>
-                            <li data-chat="jane-smith">
-                                <img src="https://placehold.co/50x50/e0e0e0/333333?text=JS" alt="Profile picture of Jane Smith">
-                                <div class="conversation-info">
-                                    <h4>Jane Smith</h4>
-                                    <p>Thanks for the help!</p>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+<!-- ── Main ── -->
+<div class="main">
 
-                    <div class="chat-main">
-                        <div class="chat-header">
-                            <img id="chat-header-img" src="https://placehold.co/50x50/e0e0e0/333333?text=JD" alt="Profile picture of active chat">
-                            <h4 id="chat-header-name">Mentor John Doe</h4>
-                        </div>
-                        <div class="chat-messages">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search anything…"/>
+    </div>
+    <div class="topbar-right">
+      <div class="notif-btn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-badge"></span>
+      </div>
+    </div>
+  </div>
 
-                            <!-- === Chat Messages for John Doe === -->
-                            <div class="chat-conversation-messages active" data-chat-id="john-doe">
-                                <div class="message received">
-                                    <p>Hi, how's your project going? Do you need any help with the new feature?</p>
-                                    <span class="timestamp">10:00 AM</span>
-                                </div>
-                                <div class="message sent">
-                                    <p>Hey John! It's going well, thanks. I'm a bit stuck on the authentication part. Can we connect later?</p>
-                                    <span class="timestamp">10:05 AM</span>
-                                </div>
-                                <div class="message received">
-                                    <p>Sure, I'm free around 3 PM today. Let me know if that works for you.</p>
-                                    <span class="timestamp">10:07 AM</span>
-                                </div>
-                                <div class="message sent">
-                                    <p>Perfect! See you then. Thanks a lot!</p>
-                                    <span class="timestamp">10:08 AM</span>
-                                </div>
-                            </div>
+  <!-- Chat Layout -->
+  <div class="chat-layout">
 
-                            <!-- === Chat Messages for DSA Group === -->
-                            <div class="chat-conversation-messages" data-chat-id="dsa-group">
-                                <div class="message received">
-                                    <p>Anyone free for a study session on linked lists tonight?</p>
-                                    <span class="timestamp">Yesterday 8:15 PM</span>
-                                </div>
-                                <div class="message sent">
-                                    <p>I can join around 9 PM.</p>
-                                    <span class="timestamp">Yesterday 8:20 PM</span>
-                                </div>
-                                <div class="message received">
-                                     <p>Cool, let's meet in the library study room then.</p>
-                                     <span class="timestamp">Yesterday 8:21 PM</span>
-                                 </div>
-                                <!-- New messages added below -->
-                                <div class="message received">
-                                     <p>Works for me. I'll bring my notes on tree traversal too, just in case.</p>
-                                     <span class="timestamp">Yesterday 8:22 PM</span>
-                                 </div>
-                                 <div class="message sent">
-                                     <p>Great idea. See you all soon.</p>
-                                     <span class="timestamp">Yesterday 8:25 PM</span>
-                                 </div>
-                            </div>
-
-                            <!-- === Chat Messages for Jane Smith === -->
-                            <div class="chat-conversation-messages" data-chat-id="jane-smith">
-                                <div class="message sent">
-                                    <p>Hey Jane, I found that article we were talking about. Here's the link: [link]</p>
-                                    <span class="timestamp">Tuesday 11:30 AM</span>
-                                </div>
-                                <div class="message received">
-                                    <p>Awesome, thanks so much for sending it over!</p>
-                                    <span class="timestamp">Tuesday 11:35 AM</span>
-                                </div>
-                                <div class="message sent">
-                                    <p>No problem! Let me know what you think.</p>
-                                     <span class="timestamp">Tuesday 11:36 AM</span>
-                                 </div>
-                                 <!-- New messages added below -->
-                                 <div class="message received">
-                                     <p>Will do! This is super helpful for the assignment. 🙏</p>
-                                     <span class="timestamp">Tuesday 11:37 AM</span>
-                                 </div>
-                            </div>
-
-                        </div>
-                        <div class="chat-input">
-                            <input type="text" placeholder="Type a message...">
-                            <button class="btn btn-primary">Send</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 UniSync. All rights reserved.</p>
+    <!-- ── Conversations Panel ── -->
+    <div class="conv-panel">
+      <div class="conv-header">
+        <h2>Messages</h2>
+        <div class="conv-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search conversations…"/>
         </div>
-    </footer>
+      </div>
 
-    <script src="assets/js/app.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const conversationListItems = document.querySelectorAll('.conversation-list li');
-            const chatHeaderImg = document.getElementById('chat-header-img');
-            const chatHeaderName = document.getElementById('chat-header-name');
-            const chatMessageBlocks = document.querySelectorAll('.chat-conversation-messages');
+      <div class="conv-tabs">
+        <div class="conv-tab active">All</div>
+        <div class="conv-tab">Groups</div>
+        <div class="conv-tab">Unread</div>
+      </div>
 
-            conversationListItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    // 1. Update Sidebar Active State
-                    conversationListItems.forEach(li => li.classList.remove('active'));
-                    item.classList.add('active');
+      <div class="conv-list">
 
-                    // 2. Get Data from Clicked Item
-                    const chatId = item.getAttribute('data-chat');
-                    const profileImgSrc = item.querySelector('img').src;
-                    const conversationName = item.querySelector('h4').textContent;
+        <!-- Active conversation -->
+        <div class="conv-item active">
+          <div class="conv-avatar av-blue">
+            JD
+            <span class="online-dot"></span>
+          </div>
+          <div class="conv-meta">
+            <div class="conv-name">John Doe</div>
+            <div class="conv-preview">Sure! Let's review your resume tomorrow 📄</div>
+          </div>
+          <div class="conv-right">
+            <span class="conv-time">2m</span>
+          </div>
+        </div>
 
-                    // 3. Update Chat Header
-                    chatHeaderImg.src = profileImgSrc;
-                    chatHeaderImg.alt = `Profile picture of ${conversationName}`; // Update alt text
-                    chatHeaderName.textContent = conversationName;
+        <div class="conv-item">
+          <div class="conv-avatar av-pink">RS</div>
+          <div class="conv-meta">
+            <div class="conv-name">Riya Sharma</div>
+            <div class="conv-preview">Can you share the DSA notes?</div>
+          </div>
+          <div class="conv-right">
+            <span class="conv-time">14m</span>
+            <span class="unread-badge">2</span>
+          </div>
+        </div>
 
-                    // 4. Switch Visible Chat Messages
-                    chatMessageBlocks.forEach(block => {
-                        if (block.getAttribute('data-chat-id') === chatId) {
-                            block.classList.add('active');
-                        } else {
-                            block.classList.remove('active');
-                        }
-                    });
-                });
-            });
-        });
-    </script>
+        <div class="conv-item">
+          <div class="conv-avatar av-green">
+            GS
+            <span class="online-dot"></span>
+          </div>
+          <div class="conv-meta">
+            <div class="conv-name">Group Study 📚</div>
+            <div class="conv-preview">Kabir: Meeting at 5 PM today</div>
+          </div>
+          <div class="conv-right">
+            <span class="conv-time">1h</span>
+            <span class="unread-badge">5</span>
+          </div>
+        </div>
+
+        <div class="conv-item">
+          <div class="conv-avatar av-purple">SW</div>
+          <div class="conv-meta">
+            <div class="conv-name">Sam Wilson</div>
+            <div class="conv-preview">Session confirmed for tomorrow 🎯</div>
+          </div>
+          <div class="conv-right">
+            <span class="conv-time">3h</span>
+          </div>
+        </div>
+
+        <div class="conv-item">
+          <div class="conv-avatar av-orange">KV</div>
+          <div class="conv-meta">
+            <div class="conv-name">Kabir Verma</div>
+            <div class="conv-preview">Did you submit the assignment?</div>
+          </div>
+          <div class="conv-right">
+            <span class="conv-time">5h</span>
+          </div>
+        </div>
+
+        <div class="conv-item">
+          <div class="conv-avatar av-teal">AI</div>
+          <div class="conv-meta">
+            <div class="conv-name">Ananya Iyer</div>
+            <div class="conv-preview">Thanks for the help yesterday 🙏</div>
+          </div>
+          <div class="conv-right">
+            <span class="conv-time">1d</span>
+          </div>
+        </div>
+
+        <div class="conv-item">
+          <div class="conv-avatar av-pink">EB</div>
+          <div class="conv-meta">
+            <div class="conv-name">Emily Brown</div>
+            <div class="conv-preview">Resume review feedback sent!</div>
+          </div>
+          <div class="conv-right">
+            <span class="conv-time">2d</span>
+          </div>
+        </div>
+
+        <div class="conv-item">
+          <div class="conv-avatar av-blue">
+            TC
+          </div>
+          <div class="conv-meta">
+            <div class="conv-name">Tech Club 💻</div>
+            <div class="conv-preview">New hackathon announced!</div>
+          </div>
+          <div class="conv-right">
+            <span class="conv-time">2d</span>
+            <span class="unread-badge">9</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Message Area ── -->
+    <div class="msg-area">
+
+      <!-- Chat topbar -->
+      <div class="msg-topbar">
+        <div class="msg-avatar av-blue">JD</div>
+        <div>
+          <div class="msg-name">John Doe</div>
+          <div class="msg-status">● Online</div>
+        </div>
+        <div class="msg-actions">
+          <div class="msg-action-btn" title="Video Call">📹</div>
+          <div class="msg-action-btn" title="Voice Call">📞</div>
+          <div class="msg-action-btn" title="Info">ℹ️</div>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="messages" id="messages">
+
+        <div class="date-divider">Today</div>
+
+        <div class="msg-row">
+          <div class="bubble-avatar av-blue">JD</div>
+          <div class="bubble them">
+            Hey Arjun! How's your interview prep going?
+            <span class="bubble-time">10:02 AM</span>
+          </div>
+        </div>
+
+        <div class="msg-row me">
+          <div class="bubble-avatar av-purple">AM</div>
+          <div class="bubble me">
+            Going well! Finished two mock interviews this week. DSA is getting better 💪
+            <span class="bubble-time">10:05 AM</span>
+          </div>
+        </div>
+
+        <div class="msg-row">
+          <div class="bubble-avatar av-blue">JD</div>
+          <div class="bubble them">
+            That's great! Which topics are you focusing on?
+            <span class="bubble-time">10:06 AM</span>
+          </div>
+        </div>
+
+        <div class="msg-row me">
+          <div class="bubble-avatar av-purple">AM</div>
+          <div class="bubble me">
+            Graphs, DP and system design mostly. Also doing LeetCode daily 🔥
+            <span class="bubble-time">10:08 AM</span>
+          </div>
+        </div>
+
+        <div class="msg-row">
+          <div class="bubble-avatar av-blue">JD</div>
+          <div class="bubble them">
+            Perfect approach! I can share some resources on system design if you'd like. It's super important for FAANG interviews.
+            <span class="bubble-time">10:10 AM</span>
+          </div>
+        </div>
+
+        <div class="msg-row me">
+          <div class="bubble-avatar av-purple">AM</div>
+          <div class="bubble me">
+            That would be amazing, yes please! 🙏
+            <span class="bubble-time">10:11 AM</span>
+          </div>
+        </div>
+
+        <div class="msg-row">
+          <div class="bubble-avatar av-blue">JD</div>
+          <div class="bubble them">
+            Sure! Let's review your resume tomorrow 📄
+            <span class="bubble-time">10:13 AM</span>
+          </div>
+        </div>
+
+        <!-- Typing indicator -->
+        <div class="typing">
+          <div class="bubble-avatar av-blue" style="width:28px;height:28px;font-size:0.65rem;">JD</div>
+          <div class="typing-dots">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Input -->
+      <div class="msg-input-wrap">
+        <div class="input-attach" title="Attach file">📎</div>
+        <textarea class="msg-input" rows="1" placeholder="Type a message…" id="msgInput"></textarea>
+        <button class="send-btn" id="sendBtn" title="Send">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ── Right Info Panel ── -->
+    <div class="info-panel">
+
+      <!-- Profile -->
+      <div class="info-profile">
+        <div class="info-avatar av-blue">JD</div>
+        <div class="info-name">John Doe</div>
+        <div class="info-role">Software Engineer @ Google</div>
+        <span class="info-status">● Online</span>
+      </div>
+
+      <!-- Shared Files -->
+      <div class="info-section">
+        <h4>Shared Files</h4>
+        <div class="shared-files">
+          <div class="file-item">
+            <div class="file-icon" style="background:#EEF3FF;">📄</div>
+            <div>
+              <div class="file-name">SystemDesign.pdf</div>
+              <div class="file-size">2.4 MB</div>
+            </div>
+          </div>
+          <div class="file-item">
+            <div class="file-icon" style="background:#F0EAFF;">📊</div>
+            <div>
+              <div class="file-name">DSA_Roadmap.xlsx</div>
+              <div class="file-size">890 KB</div>
+            </div>
+          </div>
+          <div class="file-item">
+            <div class="file-icon" style="background:#FFF0F6;">🖼️</div>
+            <div>
+              <div class="file-name">Resume_template.png</div>
+              <div class="file-size">1.1 MB</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mutual Connections -->
+      <div class="info-section">
+        <h4>Mutual Connections</h4>
+        <div class="mutual-list">
+          <div class="mutual-item">
+            <div class="mutual-av av-pink">RS</div>
+            <div>
+              <div class="mutual-name">Riya Sharma</div>
+              <div class="mutual-role">Computer Science</div>
+            </div>
+          </div>
+          <div class="mutual-item">
+            <div class="mutual-av av-orange">KV</div>
+            <div>
+              <div class="mutual-name">Kabir Verma</div>
+              <div class="mutual-role">Mechanical Eng.</div>
+            </div>
+          </div>
+          <div class="mutual-item">
+            <div class="mutual-av av-teal">AI</div>
+            <div>
+              <div class="mutual-name">Ananya Iyer</div>
+              <div class="mutual-role">Biotechnology</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /chat-layout -->
+</div><!-- /main -->
+
+<script>
+  // Conversation switching
+  document.querySelectorAll('.conv-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.conv-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      // clear unread badge on click
+      const badge = item.querySelector('.unread-badge');
+      if (badge) badge.remove();
+    });
+  });
+
+  // Conv tabs
+  document.querySelectorAll('.conv-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.conv-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  // Send message
+  const input = document.getElementById('msgInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const messagesEl = document.getElementById('messages');
+
+  function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+
+    const now = new Date();
+    const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const row = document.createElement('div');
+    row.className = 'msg-row me';
+    row.innerHTML = `
+      <div class="bubble-avatar av-purple">AM</div>
+      <div class="bubble me">
+        ${text}
+        <span class="bubble-time">${time}</span>
+      </div>`;
+    // insert before typing indicator (last child)
+    messagesEl.insertBefore(row, messagesEl.lastElementChild);
+    input.value = '';
+    input.style.height = 'auto';
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+  input.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 100) + 'px';
+  });
+
+  // Scroll to bottom on load
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+</script>
 </body>
 </html>
-
