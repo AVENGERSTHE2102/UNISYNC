@@ -1,0 +1,10 @@
+.git
+.gitignore
+node_modules
+npm-debug.log
+.env
+.env.*
+coverage
+scratch
+backend-rebuild-playbook.docx
+backend-rebuild-playbook.md
