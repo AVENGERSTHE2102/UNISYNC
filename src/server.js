@@ -26,10 +26,4 @@ app.use('/api/communities', communityRoutes);
 app.use('/api/communities/:communityId/threads', threadRoutes);
 app.use('/api/threads/:threadId/replies', replyRoutes);
 
-const PORT = process.env.PORT || 3000;
-
-db.sequelize.sync().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}.`);
-  });
-});
+module.exports = app;

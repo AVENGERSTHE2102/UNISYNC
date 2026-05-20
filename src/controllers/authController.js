@@ -52,10 +52,18 @@ exports.login = async (req, res) => {
     }
 
     // 2. Find the user inside your DB records to check their userType role
-    const user = await User.findOne({ where: { email } });
+    let user = await User.findOne({ where: { email } });
 
     if (!user) {
-      return res.status(404).json({ message: 'User profile record not found in database' });
+      // Auto-create a default profile row if the user is authenticated in Firebase but SQLite record is missing
+      user = await User.create({
+        name: email.split('@')[0], // Use email username as default name
+        email,
+        password: 'MANAGED_BY_FIREBASE',
+        userType: 'student', // Default role
+        interests: []
+      });
+      console.log(`Auto-created SQLite profile for pre-existing Firebase user: ${email}`);
     }
 
     // 3. Create a local Express session token for your backend route protections (Protect Middleware)
