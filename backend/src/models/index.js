@@ -11,6 +11,7 @@ const chatRoomParticipantModel = require('./chatRoomParticipant');
 const messageModel = require('./message');
 const mentorshipModel = require('./mentorship');
 const resourceModel = require('./resource');
+const connectionModel = require('./connection');
 
 function initModels(sequelize) {
   const db = {};
@@ -28,6 +29,7 @@ function initModels(sequelize) {
   db.Message = messageModel(sequelize, DataTypes);
   db.Mentorship = mentorshipModel(sequelize, DataTypes);
   db.Resource = resourceModel(sequelize, DataTypes);
+  db.Connection = connectionModel(sequelize, DataTypes);
 
   db.Community.belongsTo(db.User, { as: 'creator', foreignKey: 'createdBy' });
   db.User.hasMany(db.Community, { as: 'communities', foreignKey: 'createdBy' });
@@ -74,6 +76,12 @@ function initModels(sequelize) {
   db.Mentorship.belongsTo(db.User, { as: 'mentor', foreignKey: 'mentorId', onDelete: 'CASCADE' });
   db.User.hasMany(db.Mentorship, { as: 'studentMentorships', foreignKey: 'studentId' });
   db.User.hasMany(db.Mentorship, { as: 'mentorMentorships', foreignKey: 'mentorId' });
+
+  // Connection Associations
+  db.Connection.belongsTo(db.User, { as: 'requester', foreignKey: 'requesterId', onDelete: 'CASCADE' });
+  db.Connection.belongsTo(db.User, { as: 'receiver', foreignKey: 'receiverId', onDelete: 'CASCADE' });
+  db.User.hasMany(db.Connection, { as: 'sentRequests', foreignKey: 'requesterId' });
+  db.User.hasMany(db.Connection, { as: 'receivedRequests', foreignKey: 'receiverId' });
 
   // Resource Associations
   db.Resource.belongsTo(db.User, { as: 'uploader', foreignKey: 'uploadedBy', onDelete: 'CASCADE' });

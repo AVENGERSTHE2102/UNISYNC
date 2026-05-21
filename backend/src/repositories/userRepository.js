@@ -22,6 +22,26 @@ function createUserRepository({ User }) {
       });
       return users.map(sanitizeUserRecord);
     },
+    async listMentors(filters = {}) {
+      const { Op } = require('sequelize');
+      const where = {
+        role: {
+          [Op.in]: ['alumni', 'admin']
+        }
+      };
+
+      if (filters.interest) {
+        where.interests = {
+          [Op.contains]: [filters.interest]
+        };
+      }
+
+      const users = await User.findAll({
+        where,
+        attributes: ['id', 'name', 'email', 'role', 'yearOfStudy', 'branch', 'company', 'professionalRole', 'interests'],
+      });
+      return users.map(sanitizeUserRecord);
+    },
   };
 }
 

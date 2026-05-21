@@ -11,6 +11,7 @@ const { createMessageRepository } = require('../repositories/messageRepository')
 const { createMentorshipRepository } = require('../repositories/mentorshipRepository');
 const { createMembershipRepository } = require('../repositories/membershipRepository');
 const { createResourceRepository } = require('../repositories/resourceRepository');
+const { createConnectionRepository } = require('../repositories/connectionRepository');
 const { createAuthService } = require('../services/authService');
 const { createCommunityService } = require('../services/communityService');
 const { createThreadService } = require('../services/threadService');
@@ -21,6 +22,7 @@ const { createMentorshipService } = require('../services/mentorshipService');
 const { createMessageService } = require('../services/messageService');
 const { createMembershipService } = require('../services/membershipService');
 const { createResourceService } = require('../services/resourceService');
+const { createConnectionService } = require('../services/connectionService');
 
 function createRuntimeContainer() {
   const sequelize = createSequelizeInstance();
@@ -38,6 +40,7 @@ function createRuntimeContainer() {
     mentorshipRepository: createMentorshipRepository(models),
     membershipRepository: createMembershipRepository(models),
     resourceRepository: createResourceRepository(models),
+    connectionRepository: createConnectionRepository(models),
   };
 
   const services = {};
@@ -72,6 +75,11 @@ function createRuntimeContainer() {
     resourceRepository: repositories.resourceRepository,
     membershipRepository: repositories.membershipRepository,
     communityService: services.communityService,
+  });
+  services.connectionService = createConnectionService({
+    connectionRepository: repositories.connectionRepository,
+    userRepository: repositories.userRepository,
+    chatRoomRepository: repositories.chatRoomRepository,
   });
 
   return {
