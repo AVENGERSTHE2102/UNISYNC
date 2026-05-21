@@ -24,11 +24,17 @@ function Chat() {
   
   const messagesRef = useRef(null);
 
+  const activeConversationRef = useRef(activeConversation);
+  useEffect(() => {
+    activeConversationRef.current = activeConversation;
+  }, [activeConversation]);
+
   const { isConnected, sendMessage, setTyping } = useChatSocket(
     activeConversation?.id,
     (msg) => {
       // Ensure the message belongs to the current room
-      if (activeConversation && Number(msg.roomId) === Number(activeConversation.id)) {
+      const currentConv = activeConversationRef.current;
+      if (currentConv && Number(msg.roomId) === Number(currentConv.id)) {
         setMessages((prev) => [...prev, msg]);
       }
     }
@@ -73,7 +79,7 @@ function Chat() {
     if (activeConversation && !activeConversation.isPseudo) {
       let ignore = false;
       getChatMessages(activeConversation.id).then((msgs) => {
-        if (!ignore) setMessages(msgs.reverse());
+        if (!ignore) setMessages(msgs);
       });
       return () => { ignore = true; };
     } else {

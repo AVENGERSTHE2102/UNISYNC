@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { io } from 'socket.io-client';
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
@@ -10,6 +10,11 @@ export function useChatSocket(roomId, onMessageReceived) {
   const [isConnected, setIsConnected] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [typingUsers, setTypingUsers] = useState({});
+
+  const onMessageReceivedRef = useRef(onMessageReceived);
+  useEffect(() => {
+    onMessageReceivedRef.current = onMessageReceived;
+  }, [onMessageReceived]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -31,7 +36,7 @@ export function useChatSocket(roomId, onMessageReceived) {
     });
 
     newSocket.on('chat:message', (msg) => {
-      onMessageReceived?.(msg);
+      onMessageReceivedRef.current?.(msg);
     });
 
     newSocket.on('presence:update', (users) => {
