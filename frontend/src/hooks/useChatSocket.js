@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+import { getApiUrl } from '../services/api';
 
 export function useChatSocket(roomId, onMessageReceived) {
   const [socket, setSocket] = useState(null);
@@ -20,7 +20,7 @@ export function useChatSocket(roomId, onMessageReceived) {
     const token = localStorage.getItem('token');
     if (!token) return;
 
-    const newSocket = io(SOCKET_URL, {
+    const newSocket = io(getApiUrl(''), {
       auth: { token }
     });
 

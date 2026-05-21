@@ -1,12 +1,28 @@
 export function getApiUrl(path) {
-  // Force local backend URL in development to bypass Next.js env caching bugs
-  if (process.env.NODE_ENV === 'development') {
-    return `http://localhost:3001${path}`;
+  let baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (typeof window !== 'undefined') {
+    // Only fallback to runtime config if env is missing, and don't let it force port 3000 in dev
+    if (!baseUrl && window.__UNISYNC_API_BASE_URL__ && !window.__UNISYNC_API_BASE_URL__.includes('3000')) {
+      baseUrl = window.__UNISYNC_API_BASE_URL__;
+    }
+
+    if (!baseUrl) {
+      baseUrl = 'http://localhost:3001';
+    }
+
+    // Dynamic hostname rewrite for local network sharing (e.g. 192.168.x.x)
+    if (baseUrl.includes('localhost') && window.location.hostname !== 'localhost') {
+      const portMatch = baseUrl.match(/:(\d+)$/);
+      const port = portMatch ? `:${portMatch[1]}` : '';
+      baseUrl = `${window.location.protocol}//${window.location.hostname}${port}`;
+    }
+  } else {
+    baseUrl = baseUrl || 'http://localhost:3001';
   }
-  const baseUrl = typeof window !== 'undefined'
-    ? (window.__UNISYNC_API_BASE_URL__ || process.env.NEXT_PUBLIC_API_BASE_URL || '')
-    : (process.env.NEXT_PUBLIC_API_BASE_URL || '');
-  return `${baseUrl}${path}`;
+
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${baseUrl}${normalizedPath}`;
 }
 
 export async function apiRequest(path, options = {}) {
