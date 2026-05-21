@@ -17,9 +17,10 @@ function Avatar({
   tone
 }) {
   const initials = getInitials(name || alt);
+  const imageSrc = typeof src === 'string' ? src : src?.src;
 
   const baseStyle = {
-    background: src ? 'transparent' : 'var(--color-primary-soft)',
+    background: imageSrc ? 'transparent' : 'var(--color-primary-soft)',
     color: 'var(--color-primary-dark)',
     display: 'flex',
     alignItems: 'center',
@@ -41,11 +42,11 @@ function Avatar({
         className
       ].filter(Boolean).join(' ')}
       style={baseStyle}
-      aria-label={!src ? label : undefined}
-      role={src ? 'img' : undefined}
+      aria-label={!imageSrc ? label : undefined}
+      role={imageSrc ? 'img' : undefined}
     >
-      {src ? (
-        <img src={src} alt={label} />
+      {imageSrc ? (
+        <img src={imageSrc} alt={label} />
       ) : initials ? (
         initials
       ) : (
