@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Calendar, Users, GraduationCap, Briefcase, MessageSquare, LogOut } from 'lucide-react';
+import { LayoutDashboard, Calendar, Users, GraduationCap, Briefcase, MessageSquare, LogOut, UserPlus } from 'lucide-react';
 import { logoutUser } from '@/services/authService';
 
 const sidebarItems = [
@@ -12,6 +12,7 @@ const sidebarItems = [
   { href: '/mentorship', label: 'Mentorship', icon: GraduationCap },
   { href: '/jobs', label: 'Jobs', icon: Briefcase },
   { href: '/chat', label: 'Chat', icon: MessageSquare },
+  { href: '/network', label: 'Network', icon: UserPlus },
 ];
 
 function Sidebar() {

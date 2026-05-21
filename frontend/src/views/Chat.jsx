@@ -1,42 +1,117 @@
+'use client';
+
 import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Search, Video, Phone, Info, Paperclip, Send } from 'lucide-react';
 import Avatar from '../components/common/Avatar.jsx';
 import Button from '../components/common/Button.jsx';
 import Card, { CardContent, CardHeader, CardTitle } from '../components/common/Card.jsx';
 import Input from '../components/common/Input.jsx';
-import { conversations, initialMessages } from '../data/chatData';
+import { getChatRooms, getChatMessages } from '../services/dbService';
+import { useChatSocket } from '../hooks/useChatSocket';
 
 function Chat() {
-  const [activeConversation, setActiveConversation] = useState(conversations[0].id);
-  const [activeTab, setActiveTab] = useState('All');
-  const [unreadCleared, setUnreadCleared] = useState([]);
-  const [messages, setMessages] = useState(initialMessages);
+  const searchParams = useSearchParams();
+  const requestedRoomId = searchParams.get('room');
+  const requestedUserId = searchParams.get('user');
+  const requestedUserName = searchParams.get('name');
+
+  const [chatRooms, setChatRooms] = useState([]);
+  const [activeConversation, setActiveConversation] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState('');
+  const [loadingRooms, setLoadingRooms] = useState(true);
+  
   const messagesRef = useRef(null);
 
+  const { isConnected, sendMessage, setTyping } = useChatSocket(
+    activeConversation?.id,
+    (msg) => {
+      // Ensure the message belongs to the current room
+      if (activeConversation && Number(msg.roomId) === Number(activeConversation.id)) {
+        setMessages((prev) => [...prev, msg]);
+      }
+    }
+  );
+
+  const currentUserId = Number(typeof window !== 'undefined' ? localStorage.getItem('userId') : 0);
+
+  // Load Rooms
   useEffect(() => {
-    messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight });
+    let ignore = false;
+    getChatRooms().then((rooms) => {
+      if (ignore) return;
+      
+      let finalRooms = [...rooms];
+      let selectedRoom = null;
+
+      if (requestedRoomId) {
+        selectedRoom = finalRooms.find(r => Number(r.id) === Number(requestedRoomId));
+      }
+
+      if (!selectedRoom && requestedUserId && requestedUserName) {
+        // Pseudo room for an upcoming chat
+        selectedRoom = {
+          id: `new-${requestedUserId}`, // pseudo ID
+          isGroup: false,
+          name: requestedUserName,
+          isPseudo: true,
+          participants: [{ id: requestedUserId, name: requestedUserName }]
+        };
+        finalRooms = [selectedRoom, ...finalRooms];
+      }
+
+      setChatRooms(finalRooms);
+      setActiveConversation(selectedRoom || finalRooms[0] || null);
+      setLoadingRooms(false);
+    });
+    return () => { ignore = true; };
+  }, [requestedRoomId, requestedUserId, requestedUserName]);
+
+  // Load Messages when Active Conversation changes
+  useEffect(() => {
+    if (activeConversation && !activeConversation.isPseudo) {
+      let ignore = false;
+      getChatMessages(activeConversation.id).then((msgs) => {
+        if (!ignore) setMessages(msgs.reverse());
+      });
+      return () => { ignore = true; };
+    } else {
+      setMessages([]);
+    }
+  }, [activeConversation]);
+
+  // Auto-scroll messages
+  useEffect(() => {
+    if (messagesRef.current) {
+      messagesRef.current.scrollTo({ top: messagesRef.current.scrollHeight });
+    }
   }, [messages]);
 
-  function sendMessage() {
+  const handleSendMessage = () => {
     const text = draft.trim();
     if (!text) return;
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    setMessages((current) => [
-      ...current,
-      { id: `m-${Date.now()}`, from: 'me', initials: 'AM', text, time }
-    ]);
+
+    if (activeConversation?.isPseudo) {
+      alert("Please ensure the connection is fully accepted before chatting.");
+      return;
+    }
+
+    sendMessage(text);
     setDraft('');
-  }
+    setTyping(false);
+  };
 
-  const visibleConversations =
-    activeTab === 'Unread'
-      ? conversations.filter((item) => item.unread && !unreadCleared.includes(item.id))
-      : activeTab === 'Groups'
-        ? conversations.filter((item) => item.name.toLowerCase().includes('group') || item.name.toLowerCase().includes('club'))
-        : conversations;
+  const getRoomDisplayName = (room) => {
+    if (room.isGroup) return room.name || 'Group Chat';
+    // For DMs, find the other participant
+    const other = room.participants?.find(p => Number(p.id) !== currentUserId);
+    return other ? other.name : 'Unknown User';
+  };
 
-  const current = conversations.find((item) => item.id === activeConversation) ?? conversations[0];
+  const getRoomDisplayTone = (room) => {
+    return room.isGroup ? 'purple' : 'blue';
+  };
 
   return (
     <div className="us-chat-layout">
@@ -44,52 +119,25 @@ function Chat() {
       <Card style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
         <CardHeader style={{ paddingBottom: '1rem' }}>
           <CardTitle style={{ fontSize: '1.25rem' }}>Messages</CardTitle>
-          <div style={{ marginTop: '1rem', position: 'relative' }}>
-            <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
-            <Input placeholder="Search conversations..." style={{ paddingLeft: '36px', height: '36px' }} />
-          </div>
-          <div style={{ display: 'flex', gap: '0.25rem', marginTop: '1rem' }}>
-            {['All', 'Groups', 'Unread'].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                type="button"
-                style={{
-                  flex: 1, padding: '0.5rem', borderRadius: 'var(--radius-lg)', border: 'none', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 600,
-                  background: activeTab === tab ? 'var(--color-primary-strong)' : 'transparent',
-                  color: activeTab === tab ? 'white' : 'var(--color-text-muted)'
-                }}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
         </CardHeader>
         <CardContent style={{ flex: 1, overflowY: 'auto', padding: '0 1rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-          {visibleConversations.map((conversation) => {
-            const unread = conversation.unread && !unreadCleared.includes(conversation.id) ? conversation.unread : null;
-            const isActive = activeConversation === conversation.id;
+          {loadingRooms ? <p>Loading chats...</p> : chatRooms.length === 0 ? <p>No conversations yet.</p> : null}
+          {chatRooms.map((room) => {
+            const isActive = activeConversation?.id === room.id;
+            const displayName = getRoomDisplayName(room);
             return (
               <button
-                key={conversation.id}
-                onClick={() => {
-                  setActiveConversation(conversation.id);
-                  setUnreadCleared((currentCleared) => [...new Set([...currentCleared, conversation.id])]);
-                }}
+                key={room.id}
+                onClick={() => setActiveConversation(room)}
                 type="button"
                 style={{
                   display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem', width: '100%', background: isActive ? 'var(--color-primary-soft)' : 'transparent',
-                  border: 'none', borderRadius: 'var(--radius-lg)', cursor: 'pointer', textAlign: 'left', transition: 'background 0.2s', position: 'relative'
+                  border: 'none', borderRadius: 'var(--radius-lg)', cursor: 'pointer', textAlign: 'left', transition: 'background 0.2s'
                 }}
               >
-                <Avatar name={conversation.name} tone={conversation.tone} />
+                <Avatar name={displayName} tone={getRoomDisplayTone(room)} />
                 <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-                  <strong style={{ fontSize: '0.95rem', color: 'var(--color-text-heading)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{conversation.name}</strong>
-                  <span style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{conversation.preview}</span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem' }}>
-                  <em style={{ fontSize: '0.75rem', color: 'var(--color-text-soft)', fontStyle: 'normal' }}>{conversation.time}</em>
-                  {unread ? <b style={{ background: 'var(--color-danger)', color: 'white', fontSize: '0.65rem', padding: '2px 6px', borderRadius: '1rem' }}>{unread}</b> : null}
+                  <strong style={{ fontSize: '0.95rem', color: 'var(--color-text-heading)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{displayName}</strong>
                 </div>
               </button>
             );
@@ -99,63 +147,69 @@ function Chat() {
 
       {/* Main Chat Area */}
       <Card style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', width: '100%' }}>
-        {/* Header */}
-        <CardHeader style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '1rem 1.5rem', borderBottom: '1px solid var(--color-border)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
-            <div style={{ position: 'relative' }}>
-              <Avatar name={current.name} tone={current.tone} />
-              {current.online && <span style={{ position: 'absolute', bottom: 0, right: 0, width: '10px', height: '10px', background: 'var(--color-success)', borderRadius: '50%', border: '2px solid var(--color-surface)' }} />}
-            </div>
-            <div>
-              <CardTitle style={{ fontSize: '1rem', margin: 0 }}>{current.name}</CardTitle>
-              <p style={{ margin: 0, fontSize: '0.875rem', color: current.online ? 'var(--color-success)' : 'var(--color-text-muted)' }}>{current.online ? 'Online' : 'Active recently'}</p>
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <Button variant="ghost" size="sm" style={{ padding: '0.5rem' }}><Video size={18} /></Button>
-            <Button variant="ghost" size="sm" style={{ padding: '0.5rem' }}><Phone size={18} /></Button>
-            <Button variant="ghost" size="sm" style={{ padding: '0.5rem' }}><Info size={18} /></Button>
-          </div>
-        </CardHeader>
-
-        {/* Messages */}
-        <CardContent ref={messagesRef} style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', background: 'var(--color-page-bg)' }}>
-          <div style={{ textAlign: 'center', color: 'var(--color-text-soft)', fontSize: '0.75rem', margin: '1rem 0' }}>Today</div>
-          {messages.map((message) => {
-            const isMe = message.from === 'me';
-            return (
-              <div key={message.id} style={{ display: 'flex', flexDirection: isMe ? 'row-reverse' : 'row', gap: '1rem', alignItems: 'flex-end' }}>
-                <Avatar name={message.initials} tone={isMe ? 'purple' : 'blue'} size="sm" />
-                <div style={{ maxWidth: '70%', display: 'flex', flexDirection: 'column', alignItems: isMe ? 'flex-end' : 'flex-start' }}>
-                  <div style={{ padding: '0.75rem 1rem', borderRadius: '1rem', background: isMe ? 'var(--color-primary-soft)' : 'var(--color-surface)', color: isMe ? 'white' : 'var(--color-text)', boxShadow: 'var(--shadow-xs)', border: isMe ? 'none' : '1px solid var(--color-border)', borderBottomRightRadius: isMe ? 0 : '1rem', borderBottomLeftRadius: isMe ? '1rem' : 0 }}>
-                    <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.5 }}>{message.text}</p>
-                  </div>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--color-text-soft)', marginTop: '0.25rem' }}>{message.time}</span>
+        {activeConversation ? (
+          <>
+            {/* Header */}
+            <CardHeader style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '1rem 1.5rem', borderBottom: '1px solid var(--color-border)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
+                <Avatar name={getRoomDisplayName(activeConversation)} tone={getRoomDisplayTone(activeConversation)} />
+                <div>
+                  <CardTitle style={{ fontSize: '1rem', margin: 0 }}>{getRoomDisplayName(activeConversation)}</CardTitle>
+                  <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+                    {isConnected ? 'Connected' : 'Connecting...'}
+                  </p>
                 </div>
               </div>
-            );
-          })}
-        </CardContent>
+            </CardHeader>
 
-        {/* Composer */}
-        <div className="us-chat-input-bar">
-          <button style={{ background: 'transparent', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', display: 'flex', padding: '0.5rem' }}><Paperclip size={20} /></button>
-          <Input
-            value={draft}
-            onChange={(event) => setDraft(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                sendMessage();
-              }
-            }}
-            placeholder="Type a message..."
-            style={{ flex: 1 }}
-          />
-          <Button onClick={sendMessage} variant="primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Send size={16} /> <span style={{ display: 'none' }}>Send</span>
-          </Button>
-        </div>
+            {/* Messages */}
+            <CardContent ref={messagesRef} style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', background: 'var(--color-page-bg)' }}>
+              {messages.length === 0 && <p style={{ textAlign: 'center', color: 'var(--color-text-muted)' }}>No messages yet.</p>}
+              {messages.map((message) => {
+                const isMe = Number(message.senderId) === currentUserId;
+                return (
+                  <div key={message.id} style={{ display: 'flex', flexDirection: isMe ? 'row-reverse' : 'row', gap: '1rem', alignItems: 'flex-end' }}>
+                    <Avatar name={message.sender?.name || 'User'} tone={isMe ? 'purple' : 'blue'} size="sm" />
+                    <div style={{ maxWidth: '70%', display: 'flex', flexDirection: 'column', alignItems: isMe ? 'flex-end' : 'flex-start' }}>
+                      <div style={{ padding: '0.75rem 1rem', borderRadius: '1rem', background: isMe ? 'var(--color-primary-soft)' : 'var(--color-surface)', color: isMe ? 'white' : 'var(--color-text)', boxShadow: 'var(--shadow-xs)', border: isMe ? 'none' : '1px solid var(--color-border)', borderBottomRightRadius: isMe ? 0 : '1rem', borderBottomLeftRadius: isMe ? '1rem' : 0 }}>
+                        <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.5 }}>{message.content}</p>
+                      </div>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--color-text-soft)', marginTop: '0.25rem' }}>
+                        {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </CardContent>
+
+            {/* Composer */}
+            <div className="us-chat-input-bar">
+              <Input
+                value={draft}
+                onChange={(event) => {
+                  setDraft(event.target.value);
+                  setTyping(event.target.value.length > 0);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    handleSendMessage();
+                  }
+                }}
+                placeholder="Type a message..."
+                style={{ flex: 1 }}
+              />
+              <Button onClick={handleSendMessage} variant="primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Send size={16} /> <span style={{ display: 'none' }}>Send</span>
+              </Button>
+            </div>
+          </>
+        ) : (
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)' }}>
+            Select a conversation to start chatting
+          </div>
+        )}
       </Card>
     </div>
   );

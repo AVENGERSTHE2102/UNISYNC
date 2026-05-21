@@ -57,18 +57,58 @@ function makeProfileDraft(currentProfile, currentSections) {
   };
 }
 
+const defaultProfile = {
+  name: '',
+  headline: '',
+  location: '',
+  email: '',
+  about: '',
+  skills: []
+};
+
+const defaultSections = [
+  { title: 'Experience', items: [] },
+  { title: 'Education', items: [] },
+  { title: 'Certifications', items: [] }
+];
+
 function Profile() {
-  const [profileDetails, setProfileDetails] = useState(profile);
-  const [sections, setSections] = useState(() => cloneSections(profileSections));
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const [profileDetails, setProfileDetails] = useState(defaultProfile);
+  const [sections, setSections] = useState(defaultSections);
   const [posts, setPosts] = useState(profilePosts);
-  const [profileDraft, setProfileDraft] = useState(() => makeProfileDraft(profile, profileSections));
+  const [profileDraft, setProfileDraft] = useState(() => makeProfileDraft(defaultProfile, defaultSections));
   const [editingProfile, setEditingProfile] = useState(false);
   const [postModalMode, setPostModalMode] = useState(null);
   const [postDraft, setPostDraft] = useState({ id: null, text: '' });
 
-  // Merge real user data from the backend on mount
+  // Load from localStorage and merge real user data from the backend on mount
   useEffect(() => {
     let ignore = false;
+    
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      setCurrentUserId(userId);
+      const storedProfileStr = localStorage.getItem(`unisync_profile_${userId}`);
+      if (storedProfileStr) {
+        try {
+          const storedProfile = JSON.parse(storedProfileStr);
+          setProfileDetails((current) => ({
+            ...current,
+            headline: storedProfile.headline || '',
+            location: storedProfile.location || '',
+            about: storedProfile.about || '',
+            skills: storedProfile.skills || [],
+          }));
+          if (storedProfile.sections) {
+            setSections(storedProfile.sections);
+          }
+        } catch (e) {
+          console.error("Failed to parse stored profile", e);
+        }
+      }
+    }
+
     getCurrentUser()
       .then((user) => {
         if (!ignore && user) {
@@ -76,13 +116,13 @@ function Profile() {
             ...current,
             name: user.name ?? current.name,
             email: user.email ?? current.email,
-            headline: user.professionalRole ?? user.branch ?? current.headline,
-            skills: user.interests?.length > 0 ? user.interests : current.skills,
+            headline: current.headline || user.professionalRole || user.branch || '',
+            skills: current.skills?.length > 0 ? current.skills : (user.interests || []),
           }));
         }
       })
       .catch(() => {
-        // API unavailable — keep static fallback data
+        // API unavailable
       });
     return () => { ignore = true; };
   }, []);
@@ -106,30 +146,57 @@ function Profile() {
   function saveProfile(event) {
     event.preventDefault();
 
+    const newSkills = profileDraft.skills
+      .split(',')
+      .map((skill) => skill.trim())
+      .filter(Boolean);
+
+    const newSections = sections.map((section) => {
+      if (!editableSectionTitles.includes(section.title)) return section;
+      const fallbackLogo = section.items[0]?.logo || section.title.slice(0, 2).toUpperCase();
+      return {
+        ...section,
+        items: textToSectionItems(profileDraft.sections[section.title] || '', fallbackLogo)
+      };
+    });
+
     setProfileDetails((current) => ({
       ...current,
       headline: profileDraft.headline,
       location: profileDraft.location,
       about: profileDraft.about,
-      skills: profileDraft.skills
-        .split(',')
-        .map((skill) => skill.trim())
-        .filter(Boolean)
+      skills: newSkills
     }));
 
-    setSections((currentSections) =>
-      currentSections.map((section) => {
-        if (!editableSectionTitles.includes(section.title)) return section;
-        const fallbackLogo = section.items[0]?.logo || section.title.slice(0, 2).toUpperCase();
-        return {
-          ...section,
-          items: textToSectionItems(profileDraft.sections[section.title] || '', fallbackLogo)
-        };
-      })
-    );
+    setSections(newSections);
+
+    if (currentUserId) {
+      const profileDataToSave = {
+        headline: profileDraft.headline,
+        location: profileDraft.location,
+        about: profileDraft.about,
+        skills: newSkills,
+        sections: newSections
+      };
+      localStorage.setItem(`unisync_profile_${currentUserId}`, JSON.stringify(profileDataToSave));
+    }
 
     setEditingProfile(false);
   }
+
+  const tasks = [
+    { id: 'headline', label: 'Add a professional headline or title', done: !!profileDetails.headline },
+    { id: 'location', label: 'Add your location (city, country)', done: !!profileDetails.location },
+    { id: 'about', label: 'Write a short bio in the "About Me" section', done: !!profileDetails.about },
+    { id: 'skills', label: 'Add at least one skill or interest', done: profileDetails.skills && profileDetails.skills.length > 0 },
+    { id: 'experience', label: 'Add your work or project experience', done: sections.find(s => s.title === 'Experience')?.items?.length > 0 },
+    { id: 'education', label: 'Add your education history', done: sections.find(s => s.title === 'Education')?.items?.length > 0 },
+    { id: 'certifications', label: 'Add certifications or achievements', done: sections.find(s => s.title === 'Certifications')?.items?.length > 0 }
+  ];
+
+  const completedTasks = tasks.filter(t => t.done).length;
+  const totalTasks = tasks.length;
+  const percentComplete = Math.round((completedTasks / totalTasks) * 100);
 
   function openCreatePost() {
     setPostDraft({ id: null, text: '' });
@@ -182,46 +249,91 @@ function Profile() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>About Me</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p style={{ margin: 0, color: 'var(--color-text)', lineHeight: 1.6 }}>{profileDetails.about}</p>
-        </CardContent>
-      </Card>
-
-      {sections.map((section) => (
-        <Card key={section.title}>
+      {/* Profile Completion Tasks Card */}
+      {percentComplete < 100 && (
+        <Card style={{ background: 'var(--color-surface)', borderLeft: '4px solid var(--color-primary)' }}>
           <CardHeader>
-            <CardTitle>{section.title}</CardTitle>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <CardTitle>Profile Completion</CardTitle>
+              <span style={{ fontWeight: 600, color: 'var(--color-primary)' }}>{percentComplete}% Complete</span>
+            </div>
+            <div style={{ width: '100%', height: '8px', background: 'var(--color-border)', borderRadius: 'var(--radius-full)', marginTop: '0.75rem', overflow: 'hidden' }}>
+              <div style={{ width: `${percentComplete}%`, height: '100%', background: 'var(--color-primary)', transition: 'width 0.4s ease' }} />
+            </div>
           </CardHeader>
-          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            {section.items.map((item) => (
-              <article key={`${section.title}-${item.title}`} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                <Avatar name={item.logo} tone="purple" />
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                  <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: 'var(--color-text-heading)' }}>{item.title}</h3>
-                  <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-dark)', fontWeight: 500 }}>{item.subtitle}</p>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{item.date}</span>
-                  {item.desc && <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--color-text)' }}>{item.desc}</p>}
-                </div>
-              </article>
+          <CardContent>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {tasks.map(task => (
+                <li key={task.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px',
+                    borderRadius: '50%', background: task.done ? 'var(--color-primary)' : 'var(--color-surface-hover)',
+                    color: task.done ? 'white' : 'var(--color-text-muted)', border: task.done ? 'none' : '1px solid var(--color-border)'
+                  }}>
+                    {task.done ? '✓' : ''}
+                  </div>
+                  <span style={{ flex: 1, color: task.done ? 'var(--color-text-muted)' : 'var(--color-text)', textDecoration: task.done ? 'line-through' : 'none' }}>
+                    {task.label}
+                  </span>
+                  {!task.done && (
+                    <Button size="sm" variant="ghost" onClick={openProfileEditor} style={{ padding: '0.25rem 0.5rem', height: 'auto', fontSize: '0.75rem' }}>
+                      Add
+                    </Button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+
+      {profileDetails.about && (
+        <Card>
+          <CardHeader>
+            <CardTitle>About Me</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p style={{ margin: 0, color: 'var(--color-text)', lineHeight: 1.6 }}>{profileDetails.about}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {sections.map((section) => {
+        if (section.items.length === 0) return null;
+        return (
+          <Card key={section.title}>
+            <CardHeader>
+              <CardTitle>{section.title}</CardTitle>
+            </CardHeader>
+            <CardContent style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {section.items.map((item) => (
+                <article key={`${section.title}-${item.title}`} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                  <Avatar name={item.logo} tone="purple" />
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: 'var(--color-text-heading)' }}>{item.title}</h3>
+                    <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-dark)', fontWeight: 500 }}>{item.subtitle}</p>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{item.date}</span>
+                    {item.desc && <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--color-text)' }}>{item.desc}</p>}
+                  </div>
+                </article>
+              ))}
+            </CardContent>
+          </Card>
+        );
+      })}
+
+      {profileDetails.skills.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Skills</CardTitle>
+          </CardHeader>
+          <CardContent style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            {profileDetails.skills.map((skill) => (
+              <Badge key={skill} variant="neutral">{skill}</Badge>
             ))}
           </CardContent>
         </Card>
-      ))}
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Skills</CardTitle>
-        </CardHeader>
-        <CardContent style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-          {profileDetails.skills.map((skill) => (
-            <Badge key={skill} variant="neutral">{skill}</Badge>
-          ))}
-        </CardContent>
-      </Card>
+      )}
 
       <Card>
         <CardHeader style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>

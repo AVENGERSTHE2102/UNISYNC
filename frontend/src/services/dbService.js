@@ -108,3 +108,41 @@ export async function createReply(threadId, reply) {
   });
   return response.data;
 }
+
+// ─── Connections ──────────────────────────────────────────────────────────────
+
+export async function sendConnectionRequest(receiverId) {
+  const response = await apiRequest('/api/connections', {
+    method: 'POST',
+    body: { receiverId },
+    auth: true
+  });
+  return response.data;
+}
+
+export async function getConnections() {
+  const response = await apiRequest('/api/connections', { auth: true });
+  return response.data ?? [];
+}
+
+export async function updateConnectionStatus(connectionId, status) {
+  const response = await apiRequest(`/api/connections/${connectionId}`, {
+    method: 'PATCH',
+    body: { status },
+    auth: true
+  });
+  return response.data;
+}
+
+// ─── Chat Sockets Data ────────────────────────────────────────────────────────
+
+export async function getChatRooms() {
+  const response = await apiRequest('/api/chat/rooms', { auth: true });
+  return response.data ?? [];
+}
+
+export async function getChatMessages(roomId) {
+  const response = await apiRequest(`/api/chat/rooms/${roomId}/messages`, { auth: true });
+  return response.data ?? [];
+}
+

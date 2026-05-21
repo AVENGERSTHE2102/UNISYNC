@@ -9,6 +9,7 @@ import Card, { CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import QuickActions from '../components/dashboard/QuickActions.jsx';
 import StatsCard from '../components/dashboard/StatsCard.jsx';
 import { getCommunities, getJobs } from '../services/dbService';
+import { getCurrentUser } from '../services/authService';
 
 const fallbackClubs = [
   { id: 'fc-1', title: 'Basketball Club', description: 'Game. Train. Win.', count: '+40', tone: 'blue' },
@@ -32,11 +33,37 @@ function Dashboard() {
   const [userName, setUserName] = useState('');
   const [clubs, setClubs] = useState(fallbackClubs);
   const [jobList, setJobList] = useState(fallbackJobs);
+  const [profilePendingTasks, setProfilePendingTasks] = useState(0);
+  const [profilePercent, setProfilePercent] = useState(100);
 
-  // Load user name from localStorage (set during login)
+  // Load user name and profile completion from localStorage
   useEffect(() => {
+    let ignore = false;
     const stored = localStorage.getItem('userName');
     if (stored) setUserName(stored);
+
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      getCurrentUser().then(user => {
+        if (!ignore && user) {
+          const storedProfileStr = localStorage.getItem(`unisync_profile_${userId}`);
+          const storedProfile = storedProfileStr ? JSON.parse(storedProfileStr) : null;
+          
+          const hasHeadline = !!(storedProfile?.headline || user.professionalRole || user.branch);
+          const hasLocation = !!storedProfile?.location;
+          const hasAbout = !!storedProfile?.about;
+          const hasSkills = !!(storedProfile?.skills?.length || user.interests?.length);
+          const hasExperience = !!(storedProfile?.sections?.find(s => s.title === 'Experience')?.items?.length);
+          const hasEducation = !!(storedProfile?.sections?.find(s => s.title === 'Education')?.items?.length);
+          const hasCertifications = !!(storedProfile?.sections?.find(s => s.title === 'Certifications')?.items?.length);
+          
+          const pendingCount = [hasHeadline, hasLocation, hasAbout, hasSkills, hasExperience, hasEducation, hasCertifications].filter(val => !val).length;
+          setProfilePendingTasks(pendingCount);
+          setProfilePercent(Math.round(((7 - pendingCount) / 7) * 100));
+        }
+      }).catch(() => {});
+    }
+    return () => { ignore = true; };
   }, []);
 
   // Load live communities
@@ -97,6 +124,27 @@ function Dashboard() {
           </div>
           <div style={{ fontSize: '4rem' }} aria-hidden="true">🎓</div>
         </section>
+
+        {/* Profile Completion Reminder */}
+        {profilePendingTasks > 0 && (
+          <section style={{ padding: '1.5rem', background: 'var(--color-warning-bg)', border: '1px solid var(--color-warning)', borderRadius: 'var(--radius-lg)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+              <div>
+                <h3 style={{ margin: '0 0 0.25rem', fontSize: '1.125rem', fontWeight: 700, color: '#b45309' }}>Complete Your Profile</h3>
+                <p style={{ margin: 0, fontSize: '0.875rem', color: '#92400e' }}>You have {profilePendingTasks} tasks remaining. A complete profile helps you get matching jobs and mentors.</p>
+              </div>
+              <a href="/profile" style={{ textDecoration: 'none' }}>
+                <Button size="sm" style={{ background: '#b45309', color: 'white', border: 'none' }}>Complete Profile</Button>
+              </a>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ flex: 1, height: '8px', background: 'rgba(180, 83, 9, 0.2)', borderRadius: 'var(--radius-full)', overflow: 'hidden' }}>
+                <div style={{ width: `${profilePercent}%`, height: '100%', background: '#b45309', transition: 'width 0.4s ease' }} />
+              </div>
+              <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#b45309' }}>{profilePercent}%</span>
+            </div>
+          </section>
+        )}
 
         {/* Stats Grid */}
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }} aria-label="Dashboard stats">
