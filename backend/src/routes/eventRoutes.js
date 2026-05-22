@@ -11,7 +11,6 @@ router.get('/', eventController.getAllEvents);
 router.post(
   '/',
   requireAuth,
-  authorize('admin'),
   validate(createEventValidators),
   eventController.createEvent
 );

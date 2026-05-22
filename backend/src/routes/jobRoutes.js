@@ -11,7 +11,6 @@ router.get('/', jobController.getAllJobs);
 router.post(
   '/',
   requireAuth,
-  authorize('admin'),
   validate(createJobValidators),
   jobController.createJob
 );

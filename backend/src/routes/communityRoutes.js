@@ -15,7 +15,6 @@ router.get('/:communityId', communityController.getCommunity);
 router.post(
   '/',
   requireAuth,
-  authorize('admin'),
   validate(createCommunityValidators),
   communityController.createCommunity
 );
