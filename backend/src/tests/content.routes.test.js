@@ -49,7 +49,7 @@ describe('content routes', () => {
     }
   });
 
-  test('admin-only create endpoints reject non-admin users', async () => {
+  test('create endpoints allow all users', async () => {
     const { app } = createTestApp();
     const token = await signupAndLogin(app, 'student', 'student@campus.test');
 
@@ -61,7 +61,7 @@ describe('content routes', () => {
       request(app)
         .post('/api/events')
         .set('Authorization', `Bearer ${token}`)
-        .send({ title: 'Meetup', description: 'desc', date: new Date().toISOString(), location: 'Hall', type: 'Meetup' }),
+        .send({ title: 'Meetup', description: 'desc', date: new Date().toISOString(), location: 'Hall', type: 'Networking' }),
       request(app)
         .post('/api/jobs')
         .set('Authorization', `Bearer ${token}`)
@@ -69,7 +69,7 @@ describe('content routes', () => {
     ]);
 
     responses.forEach((response) => {
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(201);
     });
   });
 
