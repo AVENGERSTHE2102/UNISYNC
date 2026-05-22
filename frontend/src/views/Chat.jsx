@@ -7,7 +7,7 @@ import Avatar from '../components/common/Avatar.jsx';
 import Button from '../components/common/Button.jsx';
 import Card, { CardContent, CardHeader, CardTitle } from '../components/common/Card.jsx';
 import Input from '../components/common/Input.jsx';
-import { getChatRooms, getChatMessages } from '../services/dbService';
+import { getChatRooms, getChatMessages, markRoomAsRead } from '../services/dbService';
 import { useChatSocket } from '../hooks/useChatSocket';
 
 function Chat() {
@@ -81,6 +81,16 @@ function Chat() {
       getChatMessages(activeConversation.id).then((msgs) => {
         if (!ignore) setMessages(msgs);
       });
+
+      // Mark room as read if there are unread messages
+      if (activeConversation.unreadCount > 0) {
+        markRoomAsRead(activeConversation.id).then(() => {
+          setChatRooms(prev => prev.map(r => 
+            r.id === activeConversation.id ? { ...r, unreadCount: 0 } : r
+          ));
+        });
+      }
+
       return () => { ignore = true; };
     } else {
       setMessages([]);
@@ -143,7 +153,12 @@ function Chat() {
               >
                 <Avatar name={displayName} tone={getRoomDisplayTone(room)} />
                 <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-                  <strong style={{ fontSize: '0.95rem', color: 'var(--color-text-heading)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{displayName}</strong>
+                  <strong style={{ fontSize: '0.95rem', color: room.unreadCount > 0 ? 'var(--color-primary)' : 'var(--color-text-heading)', fontWeight: room.unreadCount > 0 ? 800 : 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {displayName}
+                  </strong>
+                  {room.unreadCount > 0 && (
+                    <span style={{ fontSize: '0.75rem', color: 'var(--color-primary)', fontWeight: 'bold' }}>{room.unreadCount} new message(s)</span>
+                  )}
                 </div>
               </button>
             );

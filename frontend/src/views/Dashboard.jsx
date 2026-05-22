@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Avatar from '../components/common/Avatar.jsx';
 import Badge from '../components/common/Badge.jsx';
@@ -136,7 +137,9 @@ function Dashboard() {
               Welcome back{userName ? `, ${userName.split(' ')[0]}` : ''}!
             </h1>
             <p style={{ margin: '0 0 1.5rem', color: 'var(--color-text-muted)' }}>Explore opportunities, connect with peers, and make the most of your campus experience.</p>
-            <Button size="sm" variant="primary">Explore Now</Button>
+            <Link href="/" style={{ textDecoration: 'none' }}>
+              <Button size="sm" variant="primary">Explore Now</Button>
+            </Link>
           </div>
           <div style={{ fontSize: '4rem' }} aria-hidden="true">🎓</div>
         </section>

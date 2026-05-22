@@ -43,7 +43,7 @@ function createChatRoomRepository(models) {
 
       const roomsPlain = rooms.map(toPlain);
 
-      // Fetch the last message for each room
+      // Fetch the last message and unread count for each room
       for (const room of roomsPlain) {
         const lastMsg = await Message.findOne({
           where: { roomId: room.id },
@@ -57,6 +57,24 @@ function createChatRoomRepository(models) {
           ],
         });
         room.lastMessage = toPlain(lastMsg);
+
+        // Find the user's participant record to check lastReadAt
+        const myMembership = await ChatRoomParticipant.findOne({
+          where: { roomId: room.id, userId },
+        });
+
+        if (myMembership) {
+          const unreadCount = await Message.count({
+            where: {
+              roomId: room.id,
+              senderId: { [Message.sequelize.Sequelize.Op.ne]: userId },
+              createdAt: { [Message.sequelize.Sequelize.Op.gt]: myMembership.lastReadAt || new Date(0) }
+            }
+          });
+          room.unreadCount = unreadCount;
+        } else {
+          room.unreadCount = 0;
+        }
       }
 
       return roomsPlain;
@@ -132,6 +150,13 @@ function createChatRoomRepository(models) {
 
     async removeParticipant(roomId, userId) {
       await ChatRoomParticipant.destroy({ where: { roomId, userId } });
+    },
+
+    async markAsRead(roomId, userId) {
+      await ChatRoomParticipant.update(
+        { lastReadAt: new Date() },
+        { where: { roomId, userId } }
+      );
     },
   };
 }

@@ -80,6 +80,15 @@ function createMessageService({ messageRepository, chatRoomRepository }) {
     async listRoomsForUser(userId) {
       return chatRoomRepository.listUserRooms(userId);
     },
+
+    async markRoomAsRead(roomId, userId) {
+      // Verify membership
+      const isMember = await chatRoomRepository.hasMember(roomId, userId);
+      if (!isMember) {
+        throw new AuthorizationError('You are not a participant in this chat room.');
+      }
+      await chatRoomRepository.markAsRead(roomId, userId);
+    },
   };
 }
 

@@ -1,21 +1,23 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import PublicNavbar from '@/components/PublicNavbar';
 
 export default function PublicLayout({ children }) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
+  const pathname = usePathname();
+
   useEffect(() => {
     const token = localStorage.getItem('token') || localStorage.getItem('backendToken');
-    if (token) {
+    if (token && (pathname === '/login' || pathname === '/signup')) {
       router.replace('/dashboard');
     } else {
       setLoading(false);
     }
-  }, [router]);
+  }, [router, pathname]);
 
   if (loading) {
     return (

@@ -20,6 +20,11 @@ module.exports = (sequelize, DataTypes) =>
           key: 'id',
         },
       },
+      lastReadAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
     },
     {
       tableName: 'ChatRoomParticipants',

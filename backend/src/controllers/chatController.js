@@ -37,3 +37,9 @@ exports.getMessages = asyncHandler(async (req, res) => {
     meta: result.meta,
   });
 });
+
+exports.markRoomAsRead = asyncHandler(async (req, res) => {
+  const roomId = Number(req.params.roomId);
+  await req.app.locals.services.messageService.markRoomAsRead(roomId, req.user.id);
+  sendSuccess(res, { message: 'Room marked as read' });
+});

@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, Calendar, Users, GraduationCap, Briefcase, MessageSquare, LogOut, UserPlus, X } from 'lucide-react';
 import { logoutUser } from '@/services/authService';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { getChatRooms } from '@/services/dbService';
 
 const sidebarItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -20,6 +21,32 @@ function Sidebar({ isOpen, onClose }) {
   const pathname = usePathname();
   const router   = useRouter();
   const firstLinkRef = useRef(null);
+  const [totalUnread, setTotalUnread] = useState(0);
+
+  // Poll for unread messages occasionally and on mount
+  useEffect(() => {
+    if (!isOpen) return; // Optional: fetch when sidebar opens, but maybe better to always fetch
+    let mounted = true;
+    
+    const fetchUnread = async () => {
+      try {
+        const rooms = await getChatRooms();
+        if (!mounted) return;
+        const unread = rooms.reduce((acc, r) => acc + (r.unreadCount || 0), 0);
+        setTotalUnread(unread);
+      } catch (err) {
+        // ignore auth errors if not logged in
+      }
+    };
+
+    fetchUnread();
+    // Poll every 30 seconds
+    const interval = setInterval(fetchUnread, 30000);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, [pathname, isOpen]);
 
   function handleLogout() {
     logoutUser();
@@ -82,8 +109,14 @@ function Sidebar({ isOpen, onClose }) {
               ref={idx === 0 ? firstLinkRef : undefined}
               aria-current={isActive ? 'page' : undefined}
             >
-              <span className="nav-sidebar__icon" aria-hidden="true">
+              <span className="nav-sidebar__icon" aria-hidden="true" style={{ position: 'relative' }}>
                 <item.icon size={20} />
+                {item.href === '/chat' && totalUnread > 0 && (
+                  <span style={{
+                    position: 'absolute', top: '-4px', right: '-4px', width: '10px', height: '10px',
+                    backgroundColor: '#ef4444', borderRadius: '50%', border: '2px solid var(--color-surface)'
+                  }} />
+                )}
               </span>
               <span>{item.label}</span>
             </Link>

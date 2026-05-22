@@ -191,3 +191,11 @@ export async function getChatMessages(roomId) {
   return response.data ?? [];
 }
 
+export async function markRoomAsRead(roomId) {
+  const response = await apiRequest(`/api/chat/rooms/${roomId}/read`, {
+    method: 'POST',
+    auth: true
+  });
+  return response.data;
+}
+
