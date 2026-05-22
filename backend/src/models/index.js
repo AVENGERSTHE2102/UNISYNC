@@ -12,6 +12,10 @@ const messageModel = require('./message');
 const mentorshipModel = require('./mentorship');
 const resourceModel = require('./resource');
 const connectionModel = require('./connection');
+const eventRegistrationModel = require('./eventRegistration');
+const savedJobModel = require('./savedJob');
+const jobApplicationModel = require('./jobApplication');
+const mentorshipGoalModel = require('./mentorshipGoal');
 
 function initModels(sequelize) {
   const db = {};
@@ -30,9 +34,16 @@ function initModels(sequelize) {
   db.Mentorship = mentorshipModel(sequelize, DataTypes);
   db.Resource = resourceModel(sequelize, DataTypes);
   db.Connection = connectionModel(sequelize, DataTypes);
+  db.EventRegistration = eventRegistrationModel(sequelize, DataTypes);
+  db.SavedJob = savedJobModel(sequelize, DataTypes);
+  db.JobApplication = jobApplicationModel(sequelize, DataTypes);
+  db.MentorshipGoal = mentorshipGoalModel(sequelize, DataTypes);
 
   db.Community.belongsTo(db.User, { as: 'creator', foreignKey: 'createdBy' });
   db.User.hasMany(db.Community, { as: 'communities', foreignKey: 'createdBy' });
+
+  db.Community.belongsTo(db.ChatRoom, { foreignKey: 'chatRoomId', onDelete: 'SET NULL' });
+  db.ChatRoom.hasOne(db.Community, { foreignKey: 'chatRoomId' });
 
   db.Membership.belongsTo(db.User, { foreignKey: 'userId' });
   db.Membership.belongsTo(db.Community, { foreignKey: 'communityId' });
@@ -52,8 +63,23 @@ function initModels(sequelize) {
   db.Event.belongsTo(db.User, { as: 'organizer', foreignKey: 'organizerId' });
   db.User.hasMany(db.Event, { foreignKey: 'organizerId' });
 
+  db.EventRegistration.belongsTo(db.User, { foreignKey: 'userId' });
+  db.EventRegistration.belongsTo(db.Event, { foreignKey: 'eventId' });
+  db.User.hasMany(db.EventRegistration, { foreignKey: 'userId' });
+  db.Event.hasMany(db.EventRegistration, { foreignKey: 'eventId' });
+
   db.Job.belongsTo(db.User, { as: 'creator', foreignKey: 'createdBy' });
   db.User.hasMany(db.Job, { foreignKey: 'createdBy' });
+
+  db.SavedJob.belongsTo(db.User, { foreignKey: 'userId' });
+  db.SavedJob.belongsTo(db.Job, { foreignKey: 'jobId' });
+  db.User.hasMany(db.SavedJob, { foreignKey: 'userId' });
+  db.Job.hasMany(db.SavedJob, { foreignKey: 'jobId' });
+
+  db.JobApplication.belongsTo(db.User, { foreignKey: 'userId' });
+  db.JobApplication.belongsTo(db.Job, { foreignKey: 'jobId' });
+  db.User.hasMany(db.JobApplication, { foreignKey: 'userId' });
+  db.Job.hasMany(db.JobApplication, { foreignKey: 'jobId' });
 
   // Chat Room Associations
   db.ChatRoom.hasMany(db.ChatRoomParticipant, { foreignKey: 'roomId', onDelete: 'CASCADE' });
@@ -76,6 +102,9 @@ function initModels(sequelize) {
   db.Mentorship.belongsTo(db.User, { as: 'mentor', foreignKey: 'mentorId', onDelete: 'CASCADE' });
   db.User.hasMany(db.Mentorship, { as: 'studentMentorships', foreignKey: 'studentId' });
   db.User.hasMany(db.Mentorship, { as: 'mentorMentorships', foreignKey: 'mentorId' });
+
+  db.MentorshipGoal.belongsTo(db.User, { foreignKey: 'userId' });
+  db.User.hasMany(db.MentorshipGoal, { foreignKey: 'userId' });
 
   // Connection Associations
   db.Connection.belongsTo(db.User, { as: 'requester', foreignKey: 'requesterId', onDelete: 'CASCADE' });

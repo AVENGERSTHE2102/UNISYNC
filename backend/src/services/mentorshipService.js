@@ -120,6 +120,20 @@ function createMentorshipService({ mentorshipRepository, userRepository }) {
         },
       };
     },
+
+    async createGoal(userId, payload) {
+      if (!payload.title || !payload.targetDate || !payload.actionPlan) {
+        throw new AppError('Title, target date, and action plan are required.', {
+          statusCode: 400,
+          code: 'MISSING_GOAL_FIELDS',
+        });
+      }
+      return mentorshipRepository.createGoal(userId, payload);
+    },
+
+    async getGoals(userId) {
+      return mentorshipRepository.getGoals(userId);
+    }
   };
 }
 

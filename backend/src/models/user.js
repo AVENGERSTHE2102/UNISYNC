@@ -45,6 +45,10 @@ module.exports = (sequelize, DataTypes) =>
         allowNull: false,
         defaultValue: [],
       },
+      profilePhoto: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {
       tableName: 'Users',

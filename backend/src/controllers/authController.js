@@ -28,9 +28,56 @@ exports.me = asyncHandler(async (req, res) => {
   });
 });
 
+exports.myMemberships = asyncHandler(async (req, res) => {
+  const memberships = await req.app.locals.services.membershipService.listUserMemberships(req.user.id);
+  sendSuccess(res, {
+    data: memberships,
+  });
+});
+
 exports.listUsers = asyncHandler(async (req, res) => {
-  const users = await req.app.locals.services.authService.listUsers();
+  const currentUserId = req.user ? req.user.id : null;
+  const users = await req.app.locals.services.authService.listUsers(currentUserId);
   sendSuccess(res, {
     data: users,
+  });
+});
+
+exports.getUser = asyncHandler(async (req, res) => {
+  const currentUserId = req.user ? req.user.id : null;
+  const userId = req.params.id;
+  const user = await req.app.locals.services.authService.getUserProfile(userId, currentUserId);
+  sendSuccess(res, {
+    data: user,
+  });
+});
+
+exports.updatePreferences = asyncHandler(async (req, res) => {
+  const result = await req.app.locals.services.authService.updatePreferences(req.user.id, req.body);
+  sendSuccess(res, {
+    message: 'Preferences updated successfully.',
+    data: result,
+  });
+});
+
+exports.uploadResume = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No resume file provided' });
+  }
+  const result = await req.app.locals.services.authService.updateResumeUrl(req.user.id, `/uploads/${req.file.filename}`);
+  sendSuccess(res, {
+    message: 'Resume uploaded successfully.',
+    data: result,
+  });
+});
+
+exports.uploadProfilePhoto = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No photo file provided' });
+  }
+  const result = await req.app.locals.services.authService.updateProfilePhoto(req.user.id, `/uploads/${req.file.filename}`);
+  sendSuccess(res, {
+    message: 'Profile photo uploaded successfully.',
+    data: result,
   });
 });

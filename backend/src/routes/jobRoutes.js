@@ -16,4 +16,11 @@ router.post(
   jobController.createJob
 );
 
+router.get('/saved', requireAuth, jobController.getSavedJobs);
+router.post('/:id/save', requireAuth, jobController.saveJob);
+router.delete('/:id/save', requireAuth, jobController.unsaveJob);
+
+router.get('/applications', requireAuth, jobController.getApplications);
+router.post('/:id/apply', requireAuth, jobController.applyForJob);
+
 module.exports = router;

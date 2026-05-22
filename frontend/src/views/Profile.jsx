@@ -235,17 +235,19 @@ function Profile() {
         <div style={{ minHeight: '120px', background: 'var(--color-primary-soft)', borderBottom: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-primary-strong)' }}>
           {profileDetails.name}
         </div>
-        <CardContent style={{ paddingTop: '1.5rem', display: 'grid', gridTemplateColumns: 'auto minmax(0, 1fr) auto', gap: '1.5rem', alignItems: 'center' }}>
-          <Avatar name={profileDetails.name} size="lg" tone="blue" style={{ width: '96px', height: '96px', fontSize: '2rem' }} />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingTop: '0.5rem' }}>
-            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-text-heading)' }}>{profileDetails.name}</h1>
-            <p style={{ margin: 0, fontSize: '1rem', color: 'var(--color-text-dark)' }}>{profileDetails.headline}</p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginTop: '0.5rem', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
-              <span>📍 {profileDetails.location}</span>
-              <span>✉️ {profileDetails.email}</span>
+        <CardContent style={{ paddingTop: '1.5rem' }} className="profile-card-header">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', alignItems: 'center' }}>
+            <Avatar name={profileDetails.name} size="lg" tone="blue" style={{ width: '96px', height: '96px', fontSize: '2rem', flexShrink: 0 }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', flex: 1, minWidth: '160px' }}>
+              <h1 style={{ margin: 0, fontSize: 'clamp(1.2rem, 4vw, 1.5rem)', fontWeight: 700, color: 'var(--color-text-heading)' }}>{profileDetails.name}</h1>
+              <p style={{ margin: 0, fontSize: '1rem', color: 'var(--color-text-dark)' }}>{profileDetails.headline}</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginTop: '0.5rem', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
+                <span>📍 {profileDetails.location}</span>
+                <span>✉️ {profileDetails.email}</span>
+              </div>
             </div>
+            <Button onClick={openProfileEditor}>Edit Profile</Button>
           </div>
-          <Button onClick={openProfileEditor}>Edit Profile</Button>
         </CardContent>
       </Card>
 
@@ -371,7 +373,7 @@ function Profile() {
         )}
       >
         <form id="profile-edit-form" onSubmit={saveProfile} style={{ display: 'grid', gap: '1rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '1rem' }}>
+          <div className="form-row form-row--2col">
             <Input label="Name" value={profileDetails.name} disabled readOnly />
             <Input label="Email" value={profileDetails.email} disabled readOnly />
           </div>

@@ -20,3 +20,18 @@ exports.createEvent = asyncHandler(async (req, res) => {
     data: event,
   });
 });
+
+exports.registerForEvent = asyncHandler(async (req, res) => {
+  const result = await req.app.locals.services.eventService.registerForEvent(req.params.id, req.user);
+  sendSuccess(res, {
+    message: 'Successfully registered for event.',
+    data: result,
+  });
+});
+
+exports.getMyTickets = asyncHandler(async (req, res) => {
+  const result = await req.app.locals.services.eventService.getMyTickets(req.user);
+  sendSuccess(res, {
+    data: result,
+  });
+});

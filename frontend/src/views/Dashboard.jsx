@@ -5,10 +5,11 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Avatar from '../components/common/Avatar.jsx';
 import Badge from '../components/common/Badge.jsx';
 import Button from '../components/common/Button.jsx';
+import Modal from '../components/common/Modal.jsx';
 import Card, { CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '../components/common/Card.jsx';
 import QuickActions from '../components/dashboard/QuickActions.jsx';
 import StatsCard from '../components/dashboard/StatsCard.jsx';
-import { getCommunities, getJobs } from '../services/dbService';
+import { getCommunities, getJobs, getMyTickets } from '../services/dbService';
 import { getCurrentUser } from '../services/authService';
 
 const fallbackClubs = [
@@ -35,6 +36,8 @@ function Dashboard() {
   const [jobList, setJobList] = useState(fallbackJobs);
   const [profilePendingTasks, setProfilePendingTasks] = useState(0);
   const [profilePercent, setProfilePercent] = useState(100);
+  const [tickets, setTickets] = useState([]);
+  const [selectedTicket, setSelectedTicket] = useState(null);
 
   // Load user name and profile completion from localStorage
   useEffect(() => {
@@ -104,14 +107,27 @@ function Dashboard() {
     return () => { ignore = true; };
   }, []);
 
+  // Load my tickets
+  useEffect(() => {
+    let ignore = false;
+    getMyTickets()
+      .then((items) => {
+        if (!ignore && items.length > 0) {
+          setTickets(items);
+        }
+      })
+      .catch(() => {});
+    return () => { ignore = true; };
+  }, []);
+
   const stats = [
+    { label: 'Event Tickets', value: String(tickets.length), detail: 'Upcoming events', tone: 'pink' },
     { label: 'Active Clubs', value: String(clubs.length), detail: 'From your campus', tone: 'blue' },
-    { label: 'Mentor Sessions', value: '8', detail: '2 upcoming', tone: 'purple' },
     { label: 'Job Matches', value: String(jobList.length), detail: 'Available now', tone: 'green' }
   ];
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 300px', gap: '2rem', alignItems: 'start' }}>
+    <div className="community-page-layout">
       <main style={{ display: 'grid', gap: '2rem', minWidth: 0 }}>
         {/* Welcome Section */}
         <section style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '2rem', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-xl)', boxShadow: 'var(--shadow-sm)' }}>
@@ -152,6 +168,32 @@ function Dashboard() {
             <StatsCard key={item.label} {...item} />
           ))}
         </section>
+
+        {/* Registered Events */}
+        {tickets.length > 0 && (
+          <section>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 600 }}>Your Registered Events</h3>
+              <a href="/events/tickets" style={{ color: 'var(--color-primary)', fontSize: '0.875rem', fontWeight: 600 }}>View Tickets</a>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+              {tickets.slice(0, 3).map((ticket) => (
+                <Card key={ticket.id} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <CardHeader>
+                    <CardTitle>{ticket.Event?.title || 'Upcoming Event'}</CardTitle>
+                    <CardDescription>
+                      {ticket.Event?.date ? new Date(ticket.Event.date).toLocaleDateString() : 'Date TBD'} • {ticket.Event?.location || 'Location TBD'}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardFooter style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Badge variant="success">Registered</Badge>
+                    <Button size="sm" variant="secondary" onClick={() => setSelectedTicket(ticket)}>View QR</Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Suggested Clubs */}
         <section>
@@ -244,6 +286,33 @@ function Dashboard() {
         {/* Quick Actions */}
         <QuickActions />
       </aside>
+
+      <Modal
+        open={Boolean(selectedTicket)}
+        title="Event Ticket"
+        onClose={() => setSelectedTicket(null)}
+      >
+        {selectedTicket && (
+          <div style={{ textAlign: 'center', padding: '1rem' }}>
+            <h3 style={{ marginTop: 0, marginBottom: '0.5rem', color: 'var(--color-text-heading)' }}>
+              {selectedTicket.Event?.title || 'Event Ticket'}
+            </h3>
+            <p style={{ margin: '0 0 1.5rem', color: 'var(--color-text-muted)' }}>
+              {selectedTicket.Event?.date ? new Date(selectedTicket.Event.date).toLocaleDateString() : 'TBD'} • {selectedTicket.Event?.location || 'TBD'}
+            </p>
+            <div style={{ background: 'white', padding: '1rem', display: 'inline-block', borderRadius: 'var(--radius-md)' }}>
+              <img 
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ticket:${selectedTicket.id}`} 
+                alt="QR Code" 
+                style={{ display: 'block', width: '200px', height: '200px' }} 
+              />
+            </div>
+            <p style={{ marginTop: '1rem', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+              Ticket ID: {selectedTicket.id}
+            </p>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

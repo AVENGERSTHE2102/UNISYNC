@@ -122,6 +122,17 @@ function createChatRoomRepository(models) {
 
       return null;
     },
+
+    async addParticipant(roomId, userId) {
+      const existing = await ChatRoomParticipant.findOne({ where: { roomId, userId } });
+      if (!existing) {
+        await ChatRoomParticipant.create({ roomId, userId });
+      }
+    },
+
+    async removeParticipant(roomId, userId) {
+      await ChatRoomParticipant.destroy({ where: { roomId, userId } });
+    },
   };
 }
 

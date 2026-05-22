@@ -35,11 +35,11 @@ export async function apiRequest(path, options = {}) {
     const response = await fetch(getApiUrl(path), {
       ...fetchOptions,
       headers: {
-        ...(body ? { 'Content-Type': 'application/json' } : {}),
+        ...(body && !(body instanceof FormData) ? { 'Content-Type': 'application/json' } : {}),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...(headers ?? {})
       },
-      body: body ? JSON.stringify(body) : undefined
+      body: body instanceof FormData ? body : (body ? JSON.stringify(body) : undefined)
     });
 
     const contentType = response.headers.get('content-type');
@@ -50,6 +50,18 @@ export async function apiRequest(path, options = {}) {
     }
 
     if (!response.ok) {
+      if (response.status === 401) {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token');
+          localStorage.removeItem('backendToken');
+          localStorage.removeItem('userType');
+          localStorage.removeItem('userName');
+          localStorage.removeItem('userId');
+          window.location.href = '/login';
+        }
+        throw new Error('Your session has expired. Please log in again.');
+      }
+      
       // If it's a proxy 504/502 error (HTML), explain clearly
       if (response.status === 504 || response.status === 502) {
         throw new Error(`Server connection failed (${response.status}). Please make sure your backend server is running on port 3001.`);

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Avatar from '../components/common/Avatar.jsx';
 import Badge from '../components/common/Badge.jsx';
 import Button from '../components/common/Button.jsx';
@@ -58,7 +59,7 @@ function Jobs() {
         );
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 300px', gap: '2rem', alignItems: 'start' }}>
+    <div className="community-page-layout">
       <main style={{ display: 'grid', gap: '2rem', minWidth: 0 }}>
         <PageHeader
           title="Find Your Dream Job"
@@ -153,10 +154,10 @@ function Jobs() {
         </SidePanel>
         <SidePanel title="Quick Actions">
           <div style={{ display: 'grid', gap: '0.5rem' }}>
-            <Button variant="ghost" style={{ justifyContent: 'flex-start' }}>Upload Resume</Button>
-            <Button variant="ghost" style={{ justifyContent: 'flex-start' }}>Saved Jobs</Button>
-            <Button variant="ghost" style={{ justifyContent: 'flex-start' }}>Track Applications</Button>
-            <Button variant="ghost" style={{ justifyContent: 'flex-start' }}>Set Job Alerts</Button>
+            <Button as={Link} href="/jobs/resume" variant="ghost" style={{ justifyContent: 'flex-start' }}>Upload Resume</Button>
+            <Button as={Link} href="/jobs/saved" variant="ghost" style={{ justifyContent: 'flex-start' }}>Saved Jobs</Button>
+            <Button as={Link} href="/jobs/track" variant="ghost" style={{ justifyContent: 'flex-start' }}>Track Applications</Button>
+            <Button as={Link} href="/jobs/alerts" variant="ghost" style={{ justifyContent: 'flex-start' }}>Set Job Alerts</Button>
           </div>
         </SidePanel>
         <SidePanel title="Trending Companies">

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Avatar from '../components/common/Avatar.jsx';
 import Badge from '../components/common/Badge.jsx';
 import Button from '../components/common/Button.jsx';
@@ -60,7 +61,7 @@ function Mentorship() {
       : mentorList.filter((mentor) => mentor.category === activeFilter);
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 300px', gap: '2rem', alignItems: 'start' }}>
+    <div className="community-page-layout">
       <main style={{ display: 'grid', gap: '2rem', minWidth: 0 }}>
         <PageHeader
           title="Find Your Perfect Mentor"
@@ -145,10 +146,10 @@ function Mentorship() {
         </SidePanel>
         <SidePanel title="Quick Actions">
           <div style={{ display: 'grid', gap: '0.5rem' }}>
-            <Button variant="ghost" style={{ justifyContent: 'flex-start' }}>Find a Mentor</Button>
-            <Button variant="ghost" style={{ justifyContent: 'flex-start' }}>Schedule Session</Button>
-            <Button variant="ghost" style={{ justifyContent: 'flex-start' }}>Check Messages</Button>
-            <Button variant="ghost" style={{ justifyContent: 'flex-start' }}>Set a Goal</Button>
+            <Button as={Link} href="/mentorship" variant="ghost" style={{ justifyContent: 'flex-start' }}>Find a Mentor</Button>
+            <Button as={Link} href="/mentorship/schedule" variant="ghost" style={{ justifyContent: 'flex-start' }}>Schedule Session</Button>
+            <Button as={Link} href="/chat" variant="ghost" style={{ justifyContent: 'flex-start' }}>Check Messages</Button>
+            <Button as={Link} href="/mentorship/goals" variant="ghost" style={{ justifyContent: 'flex-start' }}>Set a Goal</Button>
           </div>
         </SidePanel>
         <SidePanel title="Top Rated">

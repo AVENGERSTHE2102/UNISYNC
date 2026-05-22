@@ -73,6 +73,17 @@
   --radius-xl: 1rem;     /* 16px */
   --radius-2xl: 1.5rem;  /* 24px */
   --radius-full: 9999px;
+  --radius-pill: 9999px; /* alias */
+
+  /* Extra colors */
+  --color-orange: #f97316;
+  --color-green: #10b981;
+  --color-blue-light: #93c5fd;
+
+  /* Extra shadows */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --color-surface-alt: #f1f5f9;
 
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);

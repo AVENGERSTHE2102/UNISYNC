@@ -33,6 +33,13 @@ function createMembershipRepository({ Membership, User }) {
       });
       return records.map(toPlain);
     },
+
+    async listUserMemberships(userId) {
+      const records = await Membership.findAll({
+        where: { userId },
+      });
+      return records.map(toPlain);
+    },
   };
 }
 

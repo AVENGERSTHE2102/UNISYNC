@@ -25,6 +25,12 @@ function createEventService({ eventRepository }) {
         type: payload.type,
       });
     },
+    async registerForEvent(eventId, actor) {
+      return eventRepository.register(eventId, actor.id);
+    },
+    async getMyTickets(actor) {
+      return eventRepository.getTickets(actor.id);
+    }
   };
 }
 

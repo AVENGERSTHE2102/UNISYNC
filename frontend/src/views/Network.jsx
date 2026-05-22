@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Avatar from '../components/common/Avatar.jsx';
 import Badge from '../components/common/Badge.jsx';
 import Button from '../components/common/Button.jsx';
@@ -113,11 +114,16 @@ export default function Network() {
             {discoverableUsers.map(user => (
               <Card key={user.id}>
                 <CardContent style={{ padding: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                  <Avatar name={user.name} />
-                  <div style={{ flex: 1 }}>
-                    <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600 }}>{user.name}</h3>
-                    <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>{user.professionalRole || user.branch || user.role}</p>
-                  </div>
+                  <Link href={`/profile/${user.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
+                    <Avatar name={user.name} />
+                    <div style={{ flex: 1 }}>
+                      <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600 }}>{user.name}</h3>
+                      <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+                        {user.professionalRole || user.branch || user.role}
+                        {user.mutualConnectionsCount > 0 && ` · ${user.mutualConnectionsCount} mutual`}
+                      </p>
+                    </div>
+                  </Link>
                   <Button size="sm" variant="primary" onClick={() => handleConnect(user.id)}>Connect</Button>
                 </CardContent>
               </Card>
@@ -136,11 +142,13 @@ export default function Network() {
                   return (
                     <Card key={conn.id}>
                       <CardContent style={{ padding: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                        <Avatar name={peer?.name || 'User'} tone="green" />
-                        <div style={{ flex: 1 }}>
-                          <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600 }}>{peer?.name}</h3>
-                          <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Connected</p>
-                        </div>
+                        <Link href={`/profile/${peer?.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
+                          <Avatar name={peer?.name || 'User'} tone="green" />
+                          <div style={{ flex: 1 }}>
+                            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600 }}>{peer?.name}</h3>
+                            <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Connected</p>
+                          </div>
+                        </Link>
                         <Button size="sm" variant="secondary" onClick={() => router.push(`/chat?room=${conn.roomId || ''}&user=${peer.id}&name=${encodeURIComponent(peer.name)}`)}>Message</Button>
                       </CardContent>
                     </Card>

@@ -11,5 +11,7 @@ router.get('/', mentorshipController.getAllMentorships);
 router.post('/', mentorshipController.createMentorship);
 router.patch('/:id', mentorshipController.updateMentorshipStatus);
 router.get('/mentors', mentorshipController.getPotentialMentors);
+router.post('/goals', mentorshipController.createGoal);
+router.get('/goals', mentorshipController.getGoals);
 
 module.exports = router;

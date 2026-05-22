@@ -22,6 +22,18 @@ function createCommunityRepository({ Community }) {
     async findById(id) {
       return toPlain(await Community.findByPk(id));
     },
+    async findByIdWithMemberCount(id) {
+      const community = await Community.findByPk(id);
+      if (!community) return null;
+      
+      const count = await community.countMemberships(); // Assuming relation 'Memberships'
+      const plain = toPlain(community);
+      plain.memberCount = count;
+      return plain;
+    },
+    async updateChatRoomId(id, chatRoomId) {
+      await Community.update({ chatRoomId }, { where: { id } });
+    },
   };
 }
 

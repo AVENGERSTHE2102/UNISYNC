@@ -67,3 +67,18 @@ exports.getPotentialMentors = asyncHandler(async (req, res) => {
     meta: result.meta,
   });
 });
+
+exports.createGoal = asyncHandler(async (req, res) => {
+  const result = await req.app.locals.services.mentorshipService.createGoal(req.user.id, req.body);
+  sendSuccess(res, {
+    data: result,
+    message: 'Mentorship goal created successfully.',
+  });
+});
+
+exports.getGoals = asyncHandler(async (req, res) => {
+  const result = await req.app.locals.services.mentorshipService.getGoals(req.user.id);
+  sendSuccess(res, {
+    data: result,
+  });
+});

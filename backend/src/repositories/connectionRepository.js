@@ -45,6 +45,13 @@ function createConnectionRepository({ Connection, User }) {
       });
       return connections.map(c => c.get({ plain: true }));
     },
+    async listAllAccepted() {
+      const connections = await Connection.findAll({
+        where: { status: 'accepted' },
+        attributes: ['requesterId', 'receiverId']
+      });
+      return connections.map(c => c.get({ plain: true }));
+    },
     async updateStatus(id, status) {
       await Connection.update({ status }, { where: { id } });
       return this.findById(id);

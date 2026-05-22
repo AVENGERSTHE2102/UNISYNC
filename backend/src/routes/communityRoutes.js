@@ -11,6 +11,7 @@ const { createCommunityValidators } = require('../validators/communityValidators
 const router = express.Router();
 
 router.get('/', communityController.getAllCommunities);
+router.get('/:communityId', communityController.getCommunity);
 router.post(
   '/',
   requireAuth,

@@ -1,34 +1,56 @@
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Badge from '../components/common/Badge.jsx';
 import Button from '../components/common/Button.jsx';
 import Card, { CardContent, CardHeader, CardTitle, CardFooter } from '../components/common/Card.jsx';
 import PageHeader from '../components/common/PageHeader.jsx';
 import FilterChips from '../components/app/FilterChips.jsx';
-import ProfileMiniCard from '../components/app/ProfileMiniCard.jsx';
 import SidePanel from '../components/app/SidePanel.jsx';
 import { eventFilters, fallbackEvents } from '../data/eventsData';
-import { getEvents } from '../services/dbService';
+import { getEvents, getMyTickets, registerForEvent } from '../services/dbService';
 
 function Events() {
   const [events, setEvents] = useState(fallbackEvents);
   const [activeFilter, setActiveFilter] = useState('All');
   const [registeredEvents, setRegisteredEvents] = useState([]);
+  const [registeringIds, setRegisteringIds] = useState(new Set());
 
   useEffect(() => {
     let ignore = false;
 
-    getEvents()
-      .then((apiEvents) => {
-        if (!ignore && apiEvents.length > 0) setEvents(apiEvents);
-      })
-      .catch(() => {
-        if (!ignore) setEvents(fallbackEvents);
-      });
+    Promise.all([
+      getEvents().catch(() => fallbackEvents),
+      getMyTickets().catch(() => [])
+    ]).then(([apiEvents, tickets]) => {
+      if (!ignore) {
+        if (apiEvents.length > 0) setEvents(apiEvents);
+        if (tickets.length > 0) {
+          setRegisteredEvents(tickets.map(t => t.eventId || t.Event?.id));
+        }
+      }
+    });
 
     return () => {
       ignore = true;
     };
   }, []);
+
+  const handleRegister = async (eventId) => {
+    if (!eventId) return;
+    setRegisteringIds(prev => new Set(prev).add(eventId));
+    try {
+      await registerForEvent(eventId);
+      setRegisteredEvents(prev => [...prev, eventId]);
+    } catch (err) {
+      alert(err.message || 'Failed to register for event');
+    } finally {
+      setRegisteringIds(prev => {
+        const next = new Set(prev);
+        next.delete(eventId);
+        return next;
+      });
+    }
+  };
 
   const filteredEvents =
     activeFilter === 'All'
@@ -36,7 +58,7 @@ function Events() {
       : events.filter((event) => event.eventType?.toLowerCase() === activeFilter.toLowerCase());
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 300px', gap: '2rem', alignItems: 'start' }}>
+    <div className="community-page-layout">
       <main style={{ display: 'grid', gap: '2rem', minWidth: 0 }}>
         <PageHeader
           title="Campus Events"
@@ -50,7 +72,9 @@ function Events() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1rem' }}>
             {filteredEvents.map((event) => {
               const eventDate = event.date ? new Date(event.date) : new Date();
-              const isRegistered = registeredEvents.includes(event.id ?? event.title);
+              const isRegistered = registeredEvents.includes(event.id);
+              const isRegistering = registeringIds.has(event.id);
+              
               return (
                 <Card key={event.id ?? event.title} style={{ display: 'flex', flexDirection: 'column' }}>
                   <CardHeader style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '1rem', paddingBottom: '0.5rem' }}>
@@ -70,10 +94,10 @@ function Events() {
                     <Button 
                       size="sm" 
                       variant={isRegistered ? 'secondary' : 'primary'}
-                      disabled={isRegistered}
-                      onClick={() => setRegisteredEvents(current => [...current, event.id ?? event.title])}
+                      disabled={isRegistered || isRegistering || !event.id}
+                      onClick={() => handleRegister(event.id)}
                     >
-                      {isRegistered ? 'Registered' : 'Register Now'}
+                      {isRegistering ? 'Registering...' : isRegistered ? 'Registered' : 'Register Now'}
                     </Button>
                   </CardFooter>
                 </Card>
@@ -94,9 +118,9 @@ function Events() {
         </SidePanel>
         <SidePanel title="Quick Actions">
           <div style={{ display: 'grid', gap: '0.5rem' }}>
-            <Button variant="ghost" style={{ justifyContent: 'flex-start' }}>Host an Event</Button>
-            <Button variant="ghost" style={{ justifyContent: 'flex-start' }}>My Tickets</Button>
-            <Button variant="ghost" style={{ justifyContent: 'flex-start' }}>Calendar Sync</Button>
+            <Button as={Link} href="/events/host" variant="ghost" style={{ justifyContent: 'flex-start' }}>Host an Event</Button>
+            <Button as={Link} href="/events/tickets" variant="ghost" style={{ justifyContent: 'flex-start' }}>My Tickets</Button>
+            <Button as={Link} href="/events/calendar-sync" variant="ghost" style={{ justifyContent: 'flex-start' }}>Calendar Sync</Button>
           </div>
         </SidePanel>
       </aside>

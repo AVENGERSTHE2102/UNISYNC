@@ -3,7 +3,7 @@ function toPlain(record) {
 }
 
 function createMentorshipRepository(models) {
-  const { Mentorship, User } = models;
+  const { Mentorship, User, MentorshipGoal } = models;
   const { Op } = require('sequelize');
 
   return {
@@ -71,6 +71,18 @@ function createMentorshipRepository(models) {
       await record.save();
       return toPlain(record);
     },
+    async createGoal(userId, payload) {
+      return toPlain(await MentorshipGoal.create({
+        userId,
+        title: payload.title,
+        targetDate: payload.targetDate,
+        actionPlan: payload.actionPlan,
+      }));
+    },
+    async getGoals(userId) {
+      const records = await MentorshipGoal.findAll({ where: { userId } });
+      return records.map(toPlain);
+    }
   };
 }
 

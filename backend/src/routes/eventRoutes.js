@@ -11,9 +11,10 @@ router.get('/', eventController.getAllEvents);
 router.post(
   '/',
   requireAuth,
-  authorize('admin'),
   validate(createEventValidators),
   eventController.createEvent
 );
+router.get('/tickets', requireAuth, eventController.getMyTickets);
+router.post('/:id/register', requireAuth, eventController.registerForEvent);
 
 module.exports = router;

@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) =>
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      chatRoomId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
     },
     {
       tableName: 'Communities',

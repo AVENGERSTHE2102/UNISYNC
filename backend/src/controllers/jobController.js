@@ -20,3 +20,28 @@ exports.createJob = asyncHandler(async (req, res) => {
     data: job,
   });
 });
+
+exports.getSavedJobs = asyncHandler(async (req, res) => {
+  const result = await req.app.locals.services.jobService.getSavedJobs(req.user.id);
+  sendSuccess(res, { data: result });
+});
+
+exports.saveJob = asyncHandler(async (req, res) => {
+  const result = await req.app.locals.services.jobService.saveJob(req.params.id, req.user.id);
+  sendSuccess(res, { data: result, message: 'Job saved.' });
+});
+
+exports.unsaveJob = asyncHandler(async (req, res) => {
+  await req.app.locals.services.jobService.unsaveJob(req.params.id, req.user.id);
+  sendSuccess(res, { message: 'Job unsaved.' });
+});
+
+exports.getApplications = asyncHandler(async (req, res) => {
+  const result = await req.app.locals.services.jobService.getApplications(req.user.id);
+  sendSuccess(res, { data: result });
+});
+
+exports.applyForJob = asyncHandler(async (req, res) => {
+  const result = await req.app.locals.services.jobService.applyForJob(req.params.id, req.user.id);
+  sendSuccess(res, { data: result, message: 'Applied for job successfully.' });
+});

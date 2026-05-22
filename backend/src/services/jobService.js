@@ -27,6 +27,21 @@ function createJobService({ jobRepository }) {
         location: payload.location,
       });
     },
+    async saveJob(jobId, userId) {
+      return jobRepository.saveJob(jobId, userId);
+    },
+    async unsaveJob(jobId, userId) {
+      return jobRepository.unsaveJob(jobId, userId);
+    },
+    async getSavedJobs(userId) {
+      return jobRepository.getSavedJobs(userId);
+    },
+    async applyForJob(jobId, userId) {
+      return jobRepository.applyForJob(jobId, userId);
+    },
+    async getApplications(userId) {
+      return jobRepository.getApplications(userId);
+    }
   };
 }
 

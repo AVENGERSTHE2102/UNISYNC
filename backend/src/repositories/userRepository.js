@@ -42,6 +42,24 @@ function createUserRepository({ User }) {
       });
       return users.map(sanitizeUserRecord);
     },
+    async updatePreferences(id, payload) {
+      await User.update(
+        {
+          calendarSyncPreferences: payload.calendarSyncPreferences,
+          jobAlertPreferences: payload.jobAlertPreferences,
+        },
+        { where: { id } }
+      );
+      return this.findById(id);
+    },
+    async updateResumeUrl(id, resumeUrl) {
+      await User.update({ resumeUrl }, { where: { id } });
+      return this.findById(id);
+    },
+    async updateProfilePhoto(id, profilePhoto) {
+      await User.update({ profilePhoto }, { where: { id } });
+      return this.findById(id);
+    }
   };
 }
 

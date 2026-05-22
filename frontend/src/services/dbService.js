@@ -7,6 +7,11 @@ export async function getCurrentUser() {
   return response.data ?? null;
 }
 
+export async function getUserProfile(id) {
+  const response = await apiRequest(`/api/auth/users/${id}`, { auth: true });
+  return response.data ?? null;
+}
+
 // ─── Events ──────────────────────────────────────────────────────────────────
 
 export async function createEvent(event) {
@@ -21,6 +26,19 @@ export async function createEvent(event) {
 export async function getEvents() {
   const response = await apiRequest('/api/events');
   return response.data ?? [];
+}
+
+export async function getMyTickets() {
+  const response = await apiRequest('/api/events/tickets', { auth: true });
+  return response.data ?? [];
+}
+
+export async function registerForEvent(eventId) {
+  const response = await apiRequest(`/api/events/${eventId}/register`, {
+    method: 'POST',
+    auth: true
+  });
+  return response.data;
 }
 
 // ─── Mentorships ─────────────────────────────────────────────────────────────
@@ -76,6 +94,24 @@ export async function createCommunity(community) {
 
 export async function getCommunities() {
   const response = await apiRequest('/api/communities');
+  return response.data ?? [];
+}
+
+export async function getCommunityById(id) {
+  const response = await apiRequest(`/api/communities/${id}`);
+  return response.data ?? null;
+}
+
+export async function joinCommunity(communityId) {
+  const response = await apiRequest(`/api/communities/${communityId}/memberships`, {
+    method: 'POST',
+    auth: true
+  });
+  return response.data;
+}
+
+export async function getMemberships() {
+  const response = await apiRequest('/api/auth/me/memberships', { auth: true });
   return response.data ?? [];
 }
 

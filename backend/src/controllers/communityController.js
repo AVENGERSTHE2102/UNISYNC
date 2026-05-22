@@ -20,3 +20,10 @@ exports.createCommunity = asyncHandler(async (req, res) => {
     data: community,
   });
 });
+
+exports.getCommunity = asyncHandler(async (req, res) => {
+  const community = await req.app.locals.services.communityService.getCommunity(req.params.communityId);
+  sendSuccess(res, {
+    data: community,
+  });
+});

@@ -1,3 +1,5 @@
+/* RESPONSIVE CONVERSION — mobile-first, tested at 320px, 375px, 768px, 1024px, 1440px */
+
 *,
 *::before,
 *::after {
@@ -8,6 +10,7 @@
   color: var(--color-text);
   background: var(--color-page-bg);
   font-family: var(--font-family-base);
+  font-size: 16px; /* base: prevents iOS zoom */
   line-height: 1.5;
   font-weight: 400;
   text-rendering: optimizeLegibility;
@@ -26,6 +29,8 @@ body {
   min-width: 320px;
   color: var(--color-text);
   background: var(--color-page-bg);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 #root {
@@ -47,6 +52,9 @@ body {
   padding: clamp(2rem, 5vw, 4rem) 0;
 }
 
+/* ----------------------------------
+   Public Site Header (landing/auth)
+---------------------------------- */
 .site-header {
   position: sticky;
   top: 0;
@@ -94,6 +102,9 @@ body {
   gap: var(--space-2);
 }
 
+/* ----------------------------------
+   Global elements
+---------------------------------- */
 a {
   color: inherit;
   text-decoration: none;
@@ -110,6 +121,7 @@ embed,
 object {
   display: block;
   max-width: 100%;
+  height: auto;
 }
 
 button,
@@ -118,12 +130,14 @@ select,
 textarea {
   font: inherit;
   margin: 0;
+  font-size: 16px; /* prevents iOS auto-zoom */
 }
 
 button {
   border: 0;
   background: transparent;
   cursor: pointer;
+  /* Touch target size applied only on interactive UI classes, not globally */
 }
 
 button,
@@ -148,11 +162,19 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-text-heading);
   font-weight: 700;
   line-height: 1.2;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
+
+h1 { font-size: clamp(1.5rem, 4vw, 2.5rem); }
+h2 { font-size: clamp(1.25rem, 3vw, 2rem); }
+h3 { font-size: clamp(1.1rem, 2.5vw, 1.5rem); }
 
 p {
   margin: 0 0 var(--space-4) 0;
   color: var(--color-text-muted);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 p:last-child {
@@ -165,18 +187,40 @@ ul, ol {
   list-style: none;
 }
 
-@media (max-width: 640px) {
+pre, code {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+/* ----------------------------------
+   Public site header – mobile collapse
+   (landing / auth pages only)
+---------------------------------- */
+@media (max-width: 767px) {
   .site-header {
-    align-items: flex-start;
-    flex-direction: column;
-    padding-top: var(--space-4);
-    padding-bottom: var(--space-4);
+    flex-wrap: wrap;
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-3);
   }
 
   .site-nav,
   .auth-actions {
     width: 100%;
     margin-left: 0;
+    flex-wrap: wrap;
   }
 
   .auth-actions > a {
