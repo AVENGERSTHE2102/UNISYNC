@@ -246,6 +246,7 @@ function Community() {
         <SidePanel title="Quick Actions">
           <div style={{ display: 'grid', gap: '0.5rem' }}>
             <Button as={Link} href="/community/create-post" variant="ghost" style={{ justifyContent: 'flex-start' }}>Create Post</Button>
+            <Button as={Link} href="/community/create" variant="ghost" style={{ justifyContent: 'flex-start' }}>Create Community</Button>
             <Button as={Link} href="/community" variant="ghost" style={{ justifyContent: 'flex-start' }}>Find Clubs</Button>
             <Button as={Link} href="/events" variant="ghost" style={{ justifyContent: 'flex-start' }}>Upcoming Events</Button>
             <Button as={Link} href="/network" variant="ghost" style={{ justifyContent: 'flex-start' }}>Find People</Button>
