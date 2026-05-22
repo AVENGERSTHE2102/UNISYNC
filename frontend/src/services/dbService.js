@@ -58,6 +58,15 @@ export async function getMentorships() {
   return response.data ?? [];
 }
 
+export async function updateMentorshipStatus(id, status) {
+  const response = await apiRequest(`/api/mentorships/${id}`, {
+    method: 'PATCH',
+    body: { status },
+    auth: true
+  });
+  return response.data;
+}
+
 // Browse all potential mentors (requires auth)
 export async function getPotentialMentors(interest) {
   const params = interest ? `?interest=${encodeURIComponent(interest)}` : '';

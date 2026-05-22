@@ -12,20 +12,20 @@ import { mentors, mentorshipFilters, sessions } from '../data/mentorshipData';
 import { getPotentialMentors } from '../services/dbService';
 
 
-function mapApiMentors(mentorships) {
-  return mentorships.map((mentorship, index) => ({
-    id: `api-mentor-${mentorship.id ?? index}`,
-    initials: mentorship.mentorName
+function mapApiMentors(users) {
+  return users.map((user, index) => ({
+    id: user.id,
+    initials: user.name
       ?.split(' ')
       .map((part) => part[0])
       .join('')
       .slice(0, 2)
       .toUpperCase() || 'MN',
-    name: mentorship.mentorName,
-    role: mentorship.expertise,
-    category: mentorship.expertise,
-    skills: [mentorship.expertise].filter(Boolean),
-    tagline: mentorship.bio,
+    name: user.name,
+    role: user.professionalRole || user.branch || 'Industry Expert',
+    category: (user.interests && user.interests.length > 0) ? user.interests[0] : 'General',
+    skills: user.interests || [],
+    tagline: user.company ? `Working at ${user.company}` : 'Available for mentorship',
     count: '+0',
     tone: ['blue', 'pink', 'green', 'purple'][index % 4],
     online: index % 2 === 0
@@ -36,24 +36,92 @@ function Mentorship() {
   const [activeFilter, setActiveFilter] = useState('All');
   const [mentorList, setMentorList] = useState(mentors);
   const [requested, setRequested] = useState([]);
+  const [userRole, setUserRole] = useState('student');
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const [mySessions, setMySessions] = useState([]);
+  const [connecting, setConnecting] = useState(null);
 
   useEffect(() => {
     let ignore = false;
+    const role = localStorage.getItem('userType') || 'student';
+    const userId = Number(localStorage.getItem('userId'));
+    setUserRole(role);
+    setCurrentUserId(userId);
 
+    // Load potential mentors
     getPotentialMentors()
-      .then((mentorships) => {
-        if (!ignore && mentorships.length > 0) {
-          setMentorList(mapApiMentors(mentorships));
+      .then((users) => {
+        if (!ignore && users.length > 0) {
+          setMentorList(mapApiMentors(users));
         }
       })
       .catch(() => {
         if (!ignore) setMentorList(mentors);
       });
 
+    // Load existing mentorship requests/sessions
+    import('../services/dbService').then(({ getMentorships }) => {
+      getMentorships().then((requests) => {
+        if (!ignore && requests) {
+          setRequested(requests.filter(req => req.studentId === userId).map(req => req.mentorId));
+          setMySessions(requests.map(req => {
+            const isMentor = userId === Number(req.mentorId);
+            const otherPerson = isMentor ? req.student : req.mentor;
+            return {
+              id: req.id,
+              isMentor,
+              title: otherPerson ? otherPerson.name : 'Unknown User',
+              sub: otherPerson && otherPerson.professionalRole ? otherPerson.professionalRole : (isMentor ? 'Student/Mentee' : 'Mentor'),
+              type: '1:1 Mentorship',
+              status: req.status.charAt(0).toUpperCase() + req.status.slice(1),
+              icon: '🎓',
+              rawRequest: req
+            };
+          }));
+        }
+      }).catch(console.error);
+    });
+
     return () => {
       ignore = true;
     };
   }, []);
+
+  async function handleConnect(mentorId) {
+    setConnecting(mentorId);
+    try {
+      const { createMentorship } = await import('../services/dbService');
+      const newRequest = await createMentorship({ mentorId });
+      setRequested((current) => [...current, mentorId]);
+      setMySessions((current) => [{
+        id: newRequest.id || Math.random(),
+        title: mentorList.find(m => m.id === mentorId)?.name || 'Mentor',
+        sub: 'Mentorship',
+        type: '1:1 Session',
+        status: 'Pending',
+        icon: '🎓'
+      }, ...current]);
+    } catch (err) {
+      alert(err.message || 'Failed to send mentorship request.');
+    } finally {
+      setConnecting(null);
+    }
+  }
+
+  async function handleUpdateStatus(id, status) {
+    try {
+      const { updateMentorshipStatus } = await import('../services/dbService');
+      await updateMentorshipStatus(id, status);
+      setMySessions(current => current.map(s => s.id === id ? { ...s, status: status.charAt(0).toUpperCase() + status.slice(1) } : s));
+    } catch (err) {
+      alert(err.message || 'Failed to update request.');
+    }
+  }
+
+  const isAlumni = userRole === 'alumni' || userRole === 'admin';
+  const incomingRequests = mySessions.filter(s => s.isMentor && s.status === 'Pending');
+  const activeMentees = mySessions.filter(s => s.isMentor && s.status === 'Active');
+  const myMentors = mySessions.filter(s => !s.isMentor);
 
   const filteredMentors =
     activeFilter === 'All'
@@ -64,13 +132,72 @@ function Mentorship() {
     <div className="community-page-layout">
       <main style={{ display: 'grid', gap: '2rem', minWidth: 0 }}>
         <PageHeader
-          title="Find Your Perfect Mentor"
-          subtitle="Connect with experienced seniors, alumni and industry professionals who can guide your academic and career journey."
-          action={<Button variant="primary">Become a Mentor</Button>}
+          title={isAlumni ? "Mentor Dashboard" : "Find Your Perfect Mentor"}
+          subtitle={isAlumni ? "Manage your mentees and incoming mentorship requests." : "Connect with experienced seniors, alumni and industry professionals who can guide your academic and career journey."}
+          action={!isAlumni && <Button variant="primary">Become a Mentor</Button>}
         />
-        <FilterChips filters={mentorshipFilters} active={activeFilter} onChange={setActiveFilter} />
+        
+        {isAlumni && (
+          <section style={{ marginBottom: '2rem' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--color-text-heading)' }}>Incoming Requests</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+              {incomingRequests.length > 0 ? incomingRequests.map((session) => (
+                <Card key={session.id} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <CardHeader style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '1rem', paddingBottom: '1rem' }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-md)', background: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem' }}>
+                      {session.icon}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <CardTitle style={{ fontSize: '1rem' }}>{session.title}</CardTitle>
+                      <CardDescription>{session.sub}</CardDescription>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--color-text)' }}>Requested a mentorship connection.</p>
+                  </CardContent>
+                  <CardFooter style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', gap: '0.5rem', alignItems: 'center' }}>
+                    <Button variant="secondary" size="sm" style={{ flex: 1 }} onClick={() => handleUpdateStatus(session.id, 'declined')}>Decline</Button>
+                    <Button variant="primary" size="sm" style={{ flex: 1 }} onClick={() => handleUpdateStatus(session.id, 'active')}>Accept</Button>
+                  </CardFooter>
+                </Card>
+              )) : (
+                <p style={{ color: 'var(--color-text-muted)' }}>No pending requests at the moment.</p>
+              )}
+            </div>
+          </section>
+        )}
 
-        <section>
+        {isAlumni && (
+          <section style={{ marginBottom: '2rem' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--color-text-heading)' }}>My Active Mentees</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+              {activeMentees.length > 0 ? activeMentees.map((session) => (
+                <Card key={session.id} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <CardHeader style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '1rem', paddingBottom: '1rem' }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-md)', background: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem' }}>
+                      {session.icon}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <CardTitle style={{ fontSize: '1rem' }}>{session.title}</CardTitle>
+                      <CardDescription>{session.sub}</CardDescription>
+                    </div>
+                  </CardHeader>
+                  <CardFooter style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Badge variant="success">Active</Badge>
+                    <Button variant="ghost" size="sm" as={Link} href="/chat">Message</Button>
+                  </CardFooter>
+                </Card>
+              )) : (
+                <p style={{ color: 'var(--color-text-muted)' }}>You don't have any active mentees yet.</p>
+              )}
+            </div>
+          </section>
+        )}
+
+        {!isAlumni && <FilterChips filters={mentorshipFilters} active={activeFilter} onChange={setActiveFilter} />}
+
+        {!isAlumni && (
+          <section>
           <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--color-text-heading)' }}>Suggested Mentors for You</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
             {filteredMentors.map((mentor) => {
@@ -98,12 +225,12 @@ function Mentorship() {
                   <CardFooter style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>{mentor.count} mentees</span>
                     <Button
-                      disabled={isRequested}
+                      disabled={isRequested || connecting === mentor.id}
                       size="sm"
                       variant={isRequested ? 'secondary' : 'primary'}
-                      onClick={() => setRequested((current) => [...current, mentor.id])}
+                      onClick={() => handleConnect(mentor.id)}
                     >
-                      {isRequested ? 'Requested' : 'Connect'}
+                      {isRequested ? 'Requested' : (connecting === mentor.id ? 'Sending...' : 'Connect')}
                     </Button>
                   </CardFooter>
                 </Card>
@@ -111,11 +238,12 @@ function Mentorship() {
             })}
           </div>
         </section>
+        )}
 
         <section>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--color-text-heading)' }}>My Sessions</h2>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--color-text-heading)' }}>{isAlumni ? "Mentorships I've Requested" : "My Mentors"}</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
-            {sessions.map((session) => (
+            {myMentors.length > 0 ? myMentors.map((session) => (
               <Card key={session.id} style={{ display: 'flex', flexDirection: 'column' }}>
                 <CardHeader style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '1rem', paddingBottom: '1rem' }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-md)', background: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem' }}>
@@ -128,10 +256,12 @@ function Mentorship() {
                 </CardHeader>
                 <CardFooter style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>{session.type}</span>
-                  <Badge variant="info">{session.status}</Badge>
+                  <Badge variant={session.status === 'Pending' ? 'warning' : 'info'}>{session.status}</Badge>
                 </CardFooter>
               </Card>
-            ))}
+            )) : (
+              <p style={{ color: 'var(--color-text-muted)' }}>You haven't requested any mentorship sessions yet.</p>
+            )}
           </div>
         </section>
       </main>
