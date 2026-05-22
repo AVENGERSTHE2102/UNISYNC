@@ -18,23 +18,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Updated setup-node to v4 to clear the Node 20 warning
       - name: Set up Node.js version
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '22.x'
 
+      # Added working-directory to build from the backend folder
       - name: npm install, build, and test
-        working-directory: ./backend  # <-- Added this line
+        working-directory: ./backend
         run: |
           npm install
           npm run build --if-present
           npm run test --if-present
 
+      # Changed path to ./backend
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: ./backend  # <-- Changed from '.' to './backend'
+          path: ./backend
 
   deploy:
     runs-on: ubuntu-latest
@@ -44,23 +47,27 @@ jobs:
       contents: read 
 
     steps:
+      # Changed path to ./backend
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: node-app
-          path: ./backend  # <-- Download it into the backend folder
+          path: ./backend
       
+      # Updated azure/login to v2.2.0 to clear the Node 20 warning
+      # Using your exact secrets from the old file
       - name: Login to Azure
-        uses: azure/login@v2
+        uses: azure/login@v2.2.0
         with:
-          client-id: ${{ secrets.__clientidsecretname__ }}
-          tenant-id: ${{ secrets.__tenantidsecretname__ }}
-          subscription-id: ${{ secrets.__subscriptionidsecretname__ }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_A351AE28490C4213BF12AFFD61530CD8 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_60BFE20DFD5C4C73A19ECEA77C0BA46F }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_912087DC143D4FD09C08DEA5714B8B73 }}
 
+      # Changed package path to ./backend
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'Unisync-backend'
           slot-name: 'Production'
-          package: ./backend  # <-- Changed from '.' to './backend'
+          package: ./backend
