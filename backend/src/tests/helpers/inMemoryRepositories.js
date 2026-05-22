@@ -75,6 +75,19 @@ function createInMemoryRepositories() {
       async findById(id) {
         return state.communities.find((community) => community.id === Number(id)) || null;
       },
+      async findByIdWithMemberCount(id) {
+        const community = await this.findById(id);
+        if (community) {
+          community.memberCount = state.memberships.filter(m => m.communityId === Number(id)).length;
+        }
+        return community;
+      },
+      async updateChatRoomId(id, chatRoomId) {
+        const community = state.communities.find((community) => community.id === Number(id));
+        if (community) {
+          community.chatRoomId = chatRoomId;
+        }
+      },
     },
     threadRepository: {
       async listByCommunityId(communityId, pagination) {
@@ -213,6 +226,18 @@ function createInMemoryRepositories() {
               r.participantIds.includes(Number(userId2))
           ) || null
         );
+      },
+      async addParticipant(roomId, userId) {
+        const room = state.chatRooms.find((r) => r.id === Number(roomId));
+        if (room && !room.participantIds.includes(Number(userId))) {
+          room.participantIds.push(Number(userId));
+        }
+      },
+      async removeParticipant(roomId, userId) {
+        const room = state.chatRooms.find((r) => r.id === Number(roomId));
+        if (room) {
+          room.participantIds = room.participantIds.filter((id) => id !== Number(userId));
+        }
       },
     },
     messageRepository: {

@@ -73,8 +73,8 @@ describe('community memberships routes', () => {
     expect(res.status).toBe(201);
     expect(res.body.ok).toBe(true);
     expect(res.body.code).toBe('JOINED_COMMUNITY');
-    expect(res.body.data.communityId).toBe(community1.id);
-    expect(res.body.data.userId).toBe(user1.id);
+    expect(res.body.data.membership.communityId).toBe(community1.id);
+    expect(res.body.data.membership.userId).toBe(user1.id);
 
     // Check membership exists
     const isMember = await repositories.membershipRepository.isMember(community1.id, user1.id);

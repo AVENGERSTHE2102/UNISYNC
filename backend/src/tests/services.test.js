@@ -34,6 +34,7 @@ describe('services', () => {
     const repositories = createInMemoryRepositories();
     const communityService = createCommunityService({
       communityRepository: repositories.communityRepository,
+      chatRoomRepository: repositories.chatRoomRepository,
     });
     const threadService = createThreadService({
       threadRepository: repositories.threadRepository,

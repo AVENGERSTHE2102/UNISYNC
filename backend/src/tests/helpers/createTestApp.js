@@ -20,10 +20,12 @@ function buildTestServices() {
   });
   services.communityService = createCommunityService({
     communityRepository: repositories.communityRepository,
+    chatRoomRepository: repositories.chatRoomRepository,
   });
   services.membershipService = createMembershipService({
     membershipRepository: repositories.membershipRepository,
     communityService: services.communityService,
+    chatRoomRepository: repositories.chatRoomRepository,
   });
   services.threadService = createThreadService({
     threadRepository: repositories.threadRepository,
